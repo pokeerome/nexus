@@ -24,9 +24,15 @@ UPLOAD_DIR = Path("uploads")
 ALLOWED_TYPES = {".pdf", ".txt", ".md", ".docx", ".csv"}
 MAX_BYTES = 10 * 1024 * 1024  # 10 MB
 
+origins = [
+    o.strip()
+    for o in os.getenv("FRONTEND_URL", "http://localhost:5173").split(",")
+    if o.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173"), "http://localhost:5173"],
+    allow_origins=origins + ["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
