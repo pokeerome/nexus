@@ -1,3 +1,8 @@
+import os
+import tempfile
+
+from flashrank import Ranker, RerankRequest
+
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
@@ -82,10 +87,39 @@ def hybrid_search(db: Session, workspace_id: int, query: str, limit: int = 5):
     best_ids = sorted(scores, key=scores.get, reverse=True)[:limit]
     return [{**items[i], "score": round(scores[i], 4)} for i in best_ids]
 
+_ranker = None
+
+
+def get_ranker():
+    global _ranker
+    if _ranker is None:
+        _ranker = Ranker(
+            model_name="ms-marco-MiniLM-L-12-v2",
+            cache_dir=os.path.join(tempfile.gettempdir(), "flashrank"),
+        )
+    return _ranker
+
+
+def rerank_search(db: Session, workspace_id: int, query: str, limit: int = 5):
+    candidates = hybrid_search(db, workspace_id, query, limit=15)
+    if not candidates:
+        return []
+
+    passages = [{"id": c["id"], "text": c["content"]} for c in candidates]
+    ranked = get_ranker().rerank(RerankRequest(query=query, passages=passages))
+
+    by_id = {c["id"]: c for c in candidates}
+    return [
+        {**by_id[r["id"]], "score": round(float(r["score"]), 4)}
+        for r in ranked[:limit]
+    ]
+
 
 def search_chunks(
-    db: Session, workspace_id: int, query: str, limit: int = 5, mode: str = "hybrid"
+    db: Session, workspace_id: int, query: str, limit: int = 5, mode: str = "rerank"
 ):
     if mode == "vector":
         return vector_search(db, workspace_id, query, limit)
-    return hybrid_search(db, workspace_id, query, limit)
+    if mode == "hybrid":
+        return hybrid_search(db, workspace_id, query, limit)
+    return rerank_search(db, workspace_id, query, limit)
