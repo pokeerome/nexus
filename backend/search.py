@@ -116,8 +116,9 @@ def rerank_search(db: Session, workspace_id: int, query: str, limit: int = 5):
 
 
 def search_chunks(
-    db: Session, workspace_id: int, query: str, limit: int = 5, mode: str = "rerank"
+    db: Session, workspace_id: int, query: str, limit: int = 5, mode: str | None = None
 ):
+    mode = mode or os.getenv("SEARCH_MODE", "rerank")
     if mode == "vector":
         return vector_search(db, workspace_id, query, limit)
     if mode == "hybrid":

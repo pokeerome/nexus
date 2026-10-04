@@ -6,6 +6,12 @@ from extract import extract_text
 from models import Chunk, Document
 
 
+def make_header(text: str, filename: str) -> str:
+    first_line = next((line.strip() for line in text.splitlines() if line.strip()), "")
+    first_line = first_line.lstrip("# ").strip()[:100]
+    return f"{filename} | {first_line}" if first_line else filename
+
+
 def ingest_document(db: Session, doc: Document) -> None:
     try:
         doc.status = "processing"
@@ -17,6 +23,9 @@ def ingest_document(db: Session, doc: Document) -> None:
             doc.status = "failed"
             db.commit()
             return
+
+        header = make_header(text, doc.filename)
+        pieces = [f"[{header}]\n{piece}" for piece in pieces]
 
         vectors = embed_texts(pieces)
         for i, (piece, vector) in enumerate(zip(pieces, vectors)):
