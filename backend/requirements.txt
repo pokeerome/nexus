@@ -90,8 +90,13 @@ packaging==26.3
     # via
     #   huggingface-hub
     #   onnxruntime
+    #   pytesseract
 pgvector==0.5.0
     # via backend
+pillow==12.3.0
+    # via
+    #   backend
+    #   pytesseract
 protobuf==7.36.2
     # via onnxruntime
 psycopg==3.3.6
@@ -115,7 +120,11 @@ pydantic-settings==2.15.0
     # via backend
 pyjwt==2.15.1
     # via backend
+pymupdf==1.28.2
+    # via backend
 pypdf==6.19.0
+    # via backend
+pytesseract==0.3.13
     # via backend
 python-docx==1.2.0
     # via backend

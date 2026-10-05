@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.pyc
+.env
+uploads
+eval_results_*.json
+scanned_visitor_policy.pdf
