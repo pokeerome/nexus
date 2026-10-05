@@ -9,7 +9,7 @@ from deps import get_current_user, require_membership
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from models import Document, Membership, User, Workspace
+from models import Chunk, Document, Membership, User, Workspace
 from schemas import (
     ChatRequest,
     LoginRequest,
@@ -19,7 +19,7 @@ from schemas import (
 )
 from search import search_chunks
 from security import create_access_token, hash_password, verify_password
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 from tasks import ingest_document_task
 
@@ -200,3 +200,30 @@ def chat(
             yield f"data: {json.dumps(event)}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+@app.delete("/workspaces/{workspace_id}/documents/{document_id}")
+def delete_document(
+    workspace_id: int,
+    document_id: int,
+    membership: Membership = Depends(require_membership),
+    db: Session = Depends(get_db),
+):
+    doc = db.scalar(
+        select(Document).where(
+            Document.id == document_id, Document.workspace_id == workspace_id
+        )
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    stored_path = doc.stored_path
+    db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
+    db.delete(doc)
+    db.commit()
+
+    try:
+        Path(stored_path).unlink(missing_ok=True)
+    except OSError:
+        pass
+
+    return {"deleted": document_id}

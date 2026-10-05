@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
-import { listDocuments, uploadDocument } from "../api";
+import { deleteDocument, listDocuments, uploadDocument } from "../api";
 import type { DocumentInfo } from "../api";
 
 export default function Documents({ workspaceId }: { workspaceId: number }) {
@@ -8,6 +8,7 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [reloadCount, setReloadCount] = useState(0);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -53,6 +54,21 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
     }
   }
 
+  async function handleDelete(doc: DocumentInfo) {
+    if (!window.confirm(`Remove "${doc.filename}"? This cannot be undone.`)) return;
+
+    setError("");
+    setDeletingId(doc.id);
+    try {
+      await deleteDocument(workspaceId, doc.id);
+      setReloadCount((n) => n + 1);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div className="bg-slate-800 p-6 rounded-xl">
       <div className="flex items-center justify-between mb-4">
@@ -78,10 +94,19 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
         <ul className="space-y-2">
           {docs.map((d) => (
             <li key={d.id}>
-              <div className="flex justify-between">
-                <span>{d.filename}</span>
-                <span className="text-slate-400 text-sm">
-                  {(d.size_bytes / 1024).toFixed(1)} KB · {d.status}
+              <div className="flex items-center justify-between gap-3">
+                <span className="truncate">{d.filename}</span>
+                <span className="flex items-center gap-3 shrink-0">
+                  <span className="text-slate-400 text-sm">
+                    {(d.size_bytes / 1024).toFixed(1)} KB · {d.status}
+                  </span>
+                  <button
+                    onClick={() => handleDelete(d)}
+                    disabled={deletingId === d.id}
+                    className="text-red-400 hover:text-red-300 text-sm disabled:opacity-50"
+                  >
+                    {deletingId === d.id ? "Removing..." : "Remove"}
+                  </button>
                 </span>
               </div>
               {d.error && <p className="text-red-400 text-xs">{d.error}</p>}

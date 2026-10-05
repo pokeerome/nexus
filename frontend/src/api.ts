@@ -120,3 +120,9 @@ export async function streamChat(
     }
   }
 }
+
+export function deleteDocument(workspaceId: number, documentId: number) {
+  return request(`/workspaces/${workspaceId}/documents/${documentId}`, {
+    method: "DELETE",
+  });
+}
