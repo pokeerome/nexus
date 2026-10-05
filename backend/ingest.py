@@ -15,12 +15,14 @@ def make_header(text: str, filename: str) -> str:
 def ingest_document(db: Session, doc: Document) -> None:
     try:
         doc.status = "processing"
+        doc.error_message = None
         db.commit()
 
         text = extract_text(doc.stored_path).replace("\x00", "")
         pieces = chunk_text(text)
         if not pieces:
             doc.status = "failed"
+            doc.error_message = "No readable text found in this file"
             db.commit()
             return
 
@@ -44,5 +46,6 @@ def ingest_document(db: Session, doc: Document) -> None:
     except Exception as e:
         db.rollback()
         doc.status = "failed"
+        doc.error_message = str(e)[:500]
         db.commit()
         print("Ingest failed:", e)

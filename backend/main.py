@@ -1,22 +1,27 @@
+import json
 import os
 import uuid
-import json
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
+from chat import rewrite_query, stream_answer
 from database import get_db
 from deps import get_current_user, require_membership
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from models import Document, Membership, User, Workspace
-from schemas import ChatRequest, LoginRequest, SearchRequest, SignupRequest, TokenResponse
-from security import create_access_token, hash_password, verify_password
-from ingest import ingest_document
+from schemas import (
+    ChatRequest,
+    LoginRequest,
+    SearchRequest,
+    SignupRequest,
+    TokenResponse,
+)
 from search import search_chunks
-from chat import rewrite_query, stream_answer
+from security import create_access_token, hash_password, verify_password
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+from tasks import ingest_document_task
 
 app = FastAPI()
 
@@ -91,6 +96,7 @@ def doc_to_dict(doc: Document):
         "filename": doc.filename,
         "size_bytes": doc.size_bytes,
         "status": doc.status,
+        "error": doc.error_message,
         "created_at": doc.created_at,
     }
 
@@ -121,14 +127,21 @@ def upload_document(
         filename=file.filename,
         stored_path=str(stored_path),
         size_bytes=len(content),
+        status="queued",
     )
     db.add(doc)
     db.commit()
     db.refresh(doc)
 
-    ingest_document(db, doc)
-    db.refresh(doc)
+    try:
+        ingest_document_task.delay(doc.id)
+    except Exception as e:
+        doc.status = "failed"
+        doc.error_message = "Could not start processing. Please try again."
+        db.commit()
+        print("Enqueue failed:", e)
 
+    db.refresh(doc)
     return doc_to_dict(doc)
 
 
@@ -144,6 +157,22 @@ def list_documents(
         .order_by(Document.created_at.desc())
     ).all()
     return [doc_to_dict(d) for d in docs]
+
+@app.get("/workspaces/{workspace_id}/documents/{document_id}")
+def get_document(
+    workspace_id: int,
+    document_id: int,
+    membership: Membership = Depends(require_membership),
+    db: Session = Depends(get_db),
+):
+    doc = db.scalar(
+        select(Document).where(
+            Document.id == document_id, Document.workspace_id == workspace_id
+        )
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return doc_to_dict(doc)
 
 @app.post("/workspaces/{workspace_id}/search")
 def search(

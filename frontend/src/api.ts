@@ -59,6 +59,7 @@ export type DocumentInfo = {
   filename: string;
   size_bytes: number;
   status: string;
+  error: string | null;
   created_at: string;
 };
 

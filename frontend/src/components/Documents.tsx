@@ -26,6 +26,16 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
     };
   }, [workspaceId, reloadCount]);
 
+    useEffect(() => {
+    const pending = docs.some(
+      (d) => d.status === "queued" || d.status === "processing",
+    );
+    if (!pending) return;
+
+    const timer = setTimeout(() => setReloadCount((n) => n + 1), 2500);
+    return () => clearTimeout(timer);
+  }, [docs]);
+
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -67,11 +77,14 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
       ) : (
         <ul className="space-y-2">
           {docs.map((d) => (
-            <li key={d.id} className="flex justify-between">
-              <span>{d.filename}</span>
-              <span className="text-slate-400 text-sm">
-                {(d.size_bytes / 1024).toFixed(1)} KB · {d.status}
-              </span>
+            <li key={d.id}>
+              <div className="flex justify-between">
+                <span>{d.filename}</span>
+                <span className="text-slate-400 text-sm">
+                  {(d.size_bytes / 1024).toFixed(1)} KB · {d.status}
+                </span>
+              </div>
+              {d.error && <p className="text-red-400 text-xs">{d.error}</p>}
             </li>
           ))}
         </ul>

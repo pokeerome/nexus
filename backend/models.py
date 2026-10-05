@@ -41,6 +41,7 @@ class Document(Base):
     stored_path: Mapped[str] = mapped_column(String(500))
     size_bytes: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(20), default="uploaded")
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 class Chunk(Base):
