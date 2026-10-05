@@ -1,0 +1,92 @@
+{
+  "without_rewrite": {
+    "hit@1": 0.385,
+    "hit@5": 1.0,
+    "mrr": 0.656
+  },
+  "with_rewrite": {
+    "hit@1": 1.0,
+    "hit@5": 1.0,
+    "mrr": 1.0
+  },
+  "details": [
+    {
+      "question": "and how many sick days?",
+      "rewritten": "How many sick days does Northpeak provide?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "can I work from home there?",
+      "rewritten": "Can I work from home at Solmart?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how much are meals reimbursed on business trips?",
+      "rewritten": "How much are meals reimbursed for employees on business trips at Northpeak?",
+      "rank_without_rewrite": 3,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what about electronics?",
+      "rewritten": "What is the return window for electronics at Northpeak?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how fast do refunds arrive?",
+      "rewritten": "How fast do refunds from Solmart arrive?",
+      "rank_without_rewrite": 5,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "do they charge a fee for opened laptops?",
+      "rewritten": "Does Brightwave charge a fee for opened laptops?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how should I store it?",
+      "rewritten": "How should I store green tea?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how long should I brew cold brew?",
+      "rewritten": "How long should I brew cold brew coffee?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what does finally do?",
+      "rewritten": "What does the finally block do in Python?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how do I keep the original cause?",
+      "rewritten": "How do I keep the original cause of an error when handling errors in JavaScript with try and catch?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what about after it stops?",
+      "rewritten": "What should I do after the earthquake stops?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much drinking water should be included per person in a typhoon go-bag?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much water should be included in an earthquake kit per person?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    }
+  ]
+}
