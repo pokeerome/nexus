@@ -16,6 +16,7 @@ db = SessionLocal()
 hit_at_1 = 0
 hit_at_k = 0
 rank_score = 0.0
+precision_total = 0.0
 log = []
 
 for q in questions:
@@ -30,6 +31,14 @@ for q in questions:
         ):
             rank = i + 1
             break
+
+    relevant = sum(
+        1
+        for r in results
+        if r["filename"] == q["expected_file"]
+        and q["answer_text"].lower() in r["content"].lower()
+    )
+    precision_total += relevant / K
 
     if rank == 1:
         hit_at_1 += 1
@@ -55,6 +64,7 @@ summary = {
     "questions": total,
     f"hit@1": round(hit_at_1 / total, 3),
     f"hit@{K}": round(hit_at_k / total, 3),
+    f"p@{K}": round(precision_total / total, 3),
     "mrr": round(rank_score / total, 3),
 }
 
@@ -62,6 +72,7 @@ print()
 print(f"Questions: {total}")
 print(f"Hit@1: {summary['hit@1']:.2f}")
 print(f"Hit@{K}: {summary[f'hit@{K}']:.2f}")
+print(f"P@{K}: {summary[f'p@{K}']:.2f}")
 print(f"MRR: {summary['mrr']:.2f}")
 
 with open(f"eval_results_{LABEL}.json", "w", encoding="utf-8") as f:

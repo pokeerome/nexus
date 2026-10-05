@@ -1,0 +1,397 @@
+{
+  "summary": {
+    "label": "rerank_p",
+    "questions": 35,
+    "hit@1": 1.0,
+    "hit@5": 1.0,
+    "p@5": 0.229,
+    "mrr": 1.0
+  },
+  "details": [
+    {
+      "question": "How many days of paid vacation leave does Northpeak give?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_northpeak.txt",
+        "return_policy_northpeak.txt",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook.txt",
+        "employee_handbook_solmart.txt"
+      ]
+    },
+    {
+      "question": "How many days of paid vacation leave does Solmart give?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_solmart.txt",
+        "return_policy_solmart.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "Which company lets people work from home up to three days a week?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_northpeak.txt",
+        "employee_handbook.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook.txt",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "How often are performance reviews held at Northpeak?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_northpeak.txt",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook.txt",
+        "return_policy_northpeak.txt"
+      ]
+    },
+    {
+      "question": "What are the standard working hours at Solmart?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_solmart.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook.txt",
+        "return_policy_solmart.txt"
+      ]
+    },
+    {
+      "question": "How soon must lost equipment be reported at Brightwave?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook.txt",
+        "product_return_policy.txt",
+        "product_return_policy.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "What is the daily limit for paying back meals on business trips at Northpeak?",
+      "rank": 1,
+      "top_files": [
+        "employee_handbook_northpeak.txt",
+        "employee_handbook_northpeak.txt",
+        "return_policy_northpeak.txt",
+        "return_policy_northpeak.txt",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "How long is the return window at Northpeak?",
+      "rank": 1,
+      "top_files": [
+        "return_policy_northpeak.txt",
+        "return_policy_northpeak.txt",
+        "return_policy_solmart.txt",
+        "product_return_policy.txt",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "How long is the return window at Solmart?",
+      "rank": 1,
+      "top_files": [
+        "return_policy_solmart.txt",
+        "return_policy_northpeak.txt",
+        "product_return_policy.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook_solmart.txt"
+      ]
+    },
+    {
+      "question": "What fee is charged for opened laptops at Northpeak?",
+      "rank": 1,
+      "top_files": [
+        "return_policy_northpeak.txt",
+        "product_return_policy.txt",
+        "return_policy_northpeak.txt",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "RMA-9082",
+      "rank": 1,
+      "top_files": [
+        "return_policy_northpeak.txt",
+        "product_return_policy.txt",
+        "typhoon_safety_plan.txt",
+        "return_policy_solmart.txt",
+        "javascript_error_handling.md"
+      ]
+    },
+    {
+      "question": "SM-RET-310",
+      "rank": 1,
+      "top_files": [
+        "return_policy_solmart.txt",
+        "product_return_policy.txt",
+        "return_policy_northpeak.txt",
+        "return_policy_northpeak.txt",
+        "earthquake_safety_plan.txt"
+      ]
+    },
+    {
+      "question": "Which store gives a two-year warranty on electronics?",
+      "rank": 1,
+      "top_files": [
+        "return_policy_northpeak.txt",
+        "product_return_policy.txt",
+        "return_policy_solmart.txt",
+        "employee_handbook_solmart.txt",
+        "employee_handbook_solmart.txt"
+      ]
+    },
+    {
+      "question": "Which shop does not take returns by post?",
+      "rank": 1,
+      "top_files": [
+        "return_policy_solmart.txt",
+        "product_return_policy.txt",
+        "return_policy_northpeak.txt",
+        "product_return_policy.txt",
+        "return_policy_northpeak.txt"
+      ]
+    },
+    {
+      "question": "How fast does Brightwave pay refunds?",
+      "rank": 1,
+      "top_files": [
+        "product_return_policy.txt",
+        "product_return_policy.txt",
+        "employee_handbook.txt",
+        "employee_handbook.txt",
+        "return_policy_northpeak.txt"
+      ]
+    },
+    {
+      "question": "What water temperature is right for green tea?",
+      "rank": 1,
+      "top_files": [
+        "tea_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "How long should oolong tea steep?",
+      "rank": 1,
+      "top_files": [
+        "tea_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "return_policy_northpeak.txt"
+      ]
+    },
+    {
+      "question": "How many more times can good oolong leaves be used?",
+      "rank": 1,
+      "top_files": [
+        "tea_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "employee_handbook_northpeak.txt",
+        "employee_handbook.txt",
+        "employee_handbook_solmart.txt"
+      ]
+    },
+    {
+      "question": "My tea tastes bitter. What went wrong?",
+      "rank": 1,
+      "top_files": [
+        "tea_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "What coffee-to-water ratio is used for a French press?",
+      "rank": 1,
+      "top_files": [
+        "coffee_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "employee_handbook.txt",
+        "tea_brewing_guide.md"
+      ]
+    },
+    {
+      "question": "How do I keep the original cause when I throw a new error in JavaScript?",
+      "rank": 1,
+      "top_files": [
+        "javascript_error_handling.md",
+        "python_error_handling.md",
+        "javascript_error_handling.md",
+        "python_error_handling.md",
+        "return_policy_solmart.txt"
+      ]
+    },
+    {
+      "question": "What happens when a failed promise has no handler?",
+      "rank": 1,
+      "top_files": [
+        "javascript_error_handling.md",
+        "javascript_error_handling.md",
+        "python_error_handling.md",
+        "python_error_handling.md",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "How can I avoid a TypeError when a property might be missing?",
+      "rank": 1,
+      "top_files": [
+        "javascript_error_handling.md",
+        "python_error_handling.md",
+        "python_error_handling.md",
+        "javascript_error_handling.md",
+        "earthquake_safety_plan.txt"
+      ]
+    },
+    {
+      "question": "Which Python error happens when a dictionary key does not exist?",
+      "rank": 1,
+      "top_files": [
+        "python_error_handling.md",
+        "python_error_handling.md",
+        "javascript_error_handling.md",
+        "javascript_error_handling.md",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "Which JavaScript error appears when a variable is not defined?",
+      "rank": 1,
+      "top_files": [
+        "javascript_error_handling.md",
+        "javascript_error_handling.md",
+        "python_error_handling.md",
+        "python_error_handling.md",
+        "employee_handbook_northpeak.txt"
+      ]
+    },
+    {
+      "question": "What should I do while the ground is shaking?",
+      "rank": 1,
+      "top_files": [
+        "earthquake_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "solar_panel_installation.txt"
+      ]
+    },
+    {
+      "question": "What should I do if I smell gas after the shaking stops?",
+      "rank": 1,
+      "top_files": [
+        "earthquake_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "tea_brewing_guide.md"
+      ]
+    },
+    {
+      "question": "How much water per person should an earthquake kit hold?",
+      "rank": 1,
+      "top_files": [
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "solar_panel_installation.txt"
+      ]
+    },
+    {
+      "question": "How much water per person should a typhoon go-bag hold?",
+      "rank": 1,
+      "top_files": [
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "coffee_brewing_guide.md",
+        "tea_brewing_guide.md"
+      ]
+    },
+    {
+      "question": "Why should I avoid lifts when the building shakes?",
+      "rank": 1,
+      "top_files": [
+        "earthquake_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "employee_handbook.txt"
+      ]
+    },
+    {
+      "question": "How can I make water safe to drink after a storm if I am not sure it is clean?",
+      "rank": 1,
+      "top_files": [
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "tea_brewing_guide.md"
+      ]
+    },
+    {
+      "question": "What should people near the coast do after strong, long shaking?",
+      "rank": 1,
+      "top_files": [
+        "earthquake_safety_plan.txt",
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "typhoon_safety_plan.txt",
+        "tea_brewing_guide.md"
+      ]
+    },
+    {
+      "question": "How much water do I need for 20 grams of coffee in a pour-over?",
+      "rank": 1,
+      "top_files": [
+        "coffee_brewing_guide.md",
+        "tea_brewing_guide.md",
+        "coffee_brewing_guide.md",
+        "earthquake_safety_plan.txt",
+        "typhoon_safety_plan.txt"
+      ]
+    },
+    {
+      "question": "Which device changes DC power into power the house can use?",
+      "rank": 1,
+      "top_files": [
+        "solar_panel_installation.txt",
+        "typhoon_safety_plan.txt",
+        "solar_panel_installation.txt",
+        "typhoon_safety_plan.txt",
+        "earthquake_safety_plan.txt"
+      ]
+    },
+    {
+      "question": "Which Python block runs no matter what, even when an error happens?",
+      "rank": 1,
+      "top_files": [
+        "python_error_handling.md",
+        "python_error_handling.md",
+        "javascript_error_handling.md",
+        "javascript_error_handling.md",
+        "employee_handbook_northpeak.txt"
+      ]
+    }
+  ]
+}
