@@ -7,6 +7,7 @@ type Message = {
   role: "user" | "assistant";
   content: string;
   sources?: Source[];
+  searchedFor?: string;
 };
 
 export default function Chat({ workspaceId }: { workspaceId: number }) {
@@ -27,6 +28,11 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
     const question = input.trim();
     if (!question || busy) return;
 
+    const history = messages
+      .filter((m) => m.content)
+      .slice(-6)
+      .map((m) => ({ role: m.role, content: m.content.slice(0, 500) }));
+
     setInput("");
     setBusy(true);
     setMessages((prev) => [
@@ -39,8 +45,10 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
       await streamChat(
         workspaceId,
         question,
+        history,
         (sources) => updateLast((m) => ({ ...m, sources })),
         (token) => updateLast((m) => ({ ...m, content: m.content + token })),
+        (query) => updateLast((m) => ({ ...m, searchedFor: query })),
       );
     } catch {
       updateLast((m) => ({
@@ -75,6 +83,11 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
               {m.content || (busy ? "Thinking..." : "")}
             </div>
 
+            {m.searchedFor && m.searchedFor !== messages[i - 1]?.content && (
+              <p className="text-slate-500 text-xs mt-1">
+                Searched for: {m.searchedFor}
+              </p>
+            )}
             {m.sources && m.sources.length > 0 && (
               <p className="text-slate-400 text-xs mt-1">
                 Sources: {[...new Set(m.sources.map((s) => s.filename))].join(", ")}

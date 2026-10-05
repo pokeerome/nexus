@@ -16,7 +16,7 @@ from schemas import ChatRequest, LoginRequest, SearchRequest, SignupRequest, Tok
 from security import create_access_token, hash_password, verify_password
 from ingest import ingest_document
 from search import search_chunks
-from chat import stream_answer
+from chat import rewrite_query, stream_answer
 
 app = FastAPI()
 
@@ -161,10 +161,13 @@ def chat(
     membership: Membership = Depends(require_membership),
     db: Session = Depends(get_db),
 ):
-    sources = search_chunks(db, workspace_id, data.question, limit=5)
+    history = [m.model_dump() for m in data.history][-6:]
+    standalone = rewrite_query(history, data.question)
+    sources = search_chunks(db, workspace_id, standalone, limit=5)
 
     def event_stream():
-        for event in stream_answer(sources, data.question):
+        yield f"data: {json.dumps({'type': 'query', 'data': standalone})}\n\n"
+        for event in stream_answer(sources, standalone):
             yield f"data: {json.dumps(event)}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")

@@ -77,11 +77,15 @@ export function uploadDocument(workspaceId: number, file: File) {
 
 export type Source = { filename: string; chunk_index: number; score: number };
 
+export type ChatTurn = { role: "user" | "assistant"; content: string };
+
 export async function streamChat(
   workspaceId: number,
   question: string,
+  history: ChatTurn[],
   onSources: (sources: Source[]) => void,
   onToken: (token: string) => void,
+  onQuery: (query: string) => void,
 ) {
   const res = await fetch(`${API_URL}/workspaces/${workspaceId}/chat`, {
     method: "POST",
@@ -89,7 +93,7 @@ export async function streamChat(
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, history }),
   });
 
   if (!res.ok || !res.body) throw new Error("Chat failed");
@@ -109,6 +113,7 @@ export async function streamChat(
     for (const part of parts) {
       if (!part.startsWith("data: ")) continue;
       const event = JSON.parse(part.slice(6));
+      if (event.type === "query") onQuery(event.data);
       if (event.type === "sources") onSources(event.data);
       if (event.type === "token") onToken(event.data);
     }

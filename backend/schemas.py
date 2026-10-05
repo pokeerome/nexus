@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Literal
 
 
 class SignupRequest(BaseModel):
@@ -20,5 +21,11 @@ class SearchRequest(BaseModel):
     query: str
     limit: int = 5
 
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
 class ChatRequest(BaseModel):
     question: str
+    history: list[ChatMessage] = []

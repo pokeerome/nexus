@@ -45,3 +45,32 @@ def stream_answer(sources: list[dict], question: str):
             yield {"type": "token", "data": event.choices[0].delta.content}
 
     yield {"type": "done"}
+
+REWRITE_PROMPT = """Rewrite the user's last question so it makes sense on its own, using the chat history.
+- Replace words like "it", "that", "they" with what they refer to.
+- Keep the meaning. Do not answer the question.
+- If the question already makes sense on its own, return it unchanged.
+- Return only the rewritten question."""
+
+
+def rewrite_query(history: list[dict], question: str) -> str:
+    if not history:
+        return question
+
+    lines = "\n".join(f"{m['role']}: {m['content'][:500]}" for m in history[-6:])
+    try:
+        response = client.chat.completions.create(
+            model=CHAT_MODEL,
+            temperature=0,
+            messages=[
+                {"role": "system", "content": REWRITE_PROMPT},
+                {
+                    "role": "user",
+                    "content": f"Chat history:\n{lines}\n\nLast question: {question}",
+                },
+            ],
+        )
+        rewritten = (response.choices[0].message.content or "").strip()
+        return rewritten or question
+    except Exception:
+        return question
