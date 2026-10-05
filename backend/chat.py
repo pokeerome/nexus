@@ -46,11 +46,27 @@ def stream_answer(sources: list[dict], question: str):
 
     yield {"type": "done"}
 
-REWRITE_PROMPT = """Rewrite the user's last question so it makes sense on its own, using the chat history.
-- Replace words like "it", "that", "they" with what they refer to.
-- Keep the meaning. Do not answer the question.
-- If the question already makes sense on its own, return it unchanged.
-- Return only the rewritten question."""
+REWRITE_PROMPT = """You rewrite the user's last question into a standalone search question, using the chat history.
+
+Rules:
+1. If the last question depends on the chat history (for example it says "it", "there", "that", "again", or leaves out the subject), add the specific subject, company, product, or topic from the chat history so the question stands alone.
+2. Use only words and names that appear in the chat history. Never invent details.
+3. If the last question already stands alone, or starts a new topic, return it unchanged.
+4. Do not answer the question. Return only the rewritten question.
+
+Examples:
+History: the user asked "What is the refund policy of ShopA?"
+Last question: "and for electronics?"
+Rewrite: What is the refund policy of ShopA for electronics?
+
+History: the user asked "How do I reset my router?"
+Last question: "what about the password?"
+Rewrite: How do I reset the password of my router?
+
+History: the user asked about a vacation policy.
+Last question: "how much is the bus fare"
+Rewrite: how much is the bus fare
+(This is a new topic, so it stays unchanged.)"""
 
 
 def rewrite_query(history: list[dict], question: str) -> str:

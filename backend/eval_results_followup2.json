@@ -1,0 +1,92 @@
+{
+  "without_rewrite": {
+    "hit@1": 0.385,
+    "hit@5": 1.0,
+    "mrr": 0.656
+  },
+  "with_rewrite": {
+    "hit@1": 0.769,
+    "hit@5": 1.0,
+    "mrr": 0.885
+  },
+  "details": [
+    {
+      "question": "and how many sick days?",
+      "rewritten": "and how many sick days does Northpeak give?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "can I work from home there?",
+      "rewritten": "Can I work from home at Solmart?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how much are meals reimbursed on business trips?",
+      "rewritten": "And how much are meals reimbursed on business trips at Northpeak?",
+      "rank_without_rewrite": 3,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what about electronics?",
+      "rewritten": "What about electronics at Northpeak?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how fast do refunds arrive?",
+      "rewritten": "and how fast do refunds from Solmart arrive?",
+      "rank_without_rewrite": 5,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "do they charge a fee for opened laptops?",
+      "rewritten": "Do Brightwave charge a fee for opened laptops?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how should I store it?",
+      "rewritten": "How should I store green tea?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how long should I brew cold brew?",
+      "rewritten": "and how long should I brew cold brew coffee?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what does finally do?",
+      "rewritten": "What does the finally block do?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 2
+    },
+    {
+      "question": "how do I keep the original cause?",
+      "rewritten": "How do I keep the original cause of the error?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 2
+    },
+    {
+      "question": "what about after it stops?",
+      "rewritten": "What should I do after the shaking stops?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much drinking water per person?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 2
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much water should I include per person?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    }
+  ]
+}
