@@ -1,9 +1,9 @@
 import os
 
 from celery import Celery
-
 from database import SessionLocal
 from ingest import ingest_document
+from memlog import log_memory
 from models import Document
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
@@ -26,5 +26,6 @@ def ingest_document_task(document_id: int):
         if doc is None:
             return
         ingest_document(db, doc)
+        log_memory(f"ingest finished ({doc.status})")
     finally:
         db.close()

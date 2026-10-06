@@ -11,7 +11,7 @@ if os.name == "nt" and not shutil.which("tesseract") and os.path.exists(WINDOWS_
     pytesseract.pytesseract.tesseract_cmd = WINDOWS_TESSERACT
 
 
-def ocr_pdf(path: str, max_pages: int = 30, dpi: int = 200) -> str:
+def ocr_pdf(path: str, max_pages: int = 10, dpi: int = 150) -> str:
     pages = []
     with pymupdf.open(path) as pdf:
         for i, page in enumerate(pdf):

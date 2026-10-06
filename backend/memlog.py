@@ -26,6 +26,6 @@ def process_memory_mb():
 def log_memory(label: str) -> None:
     print(
         f"[memory] {label}: container={container_memory_mb()} MB, "
-        f"web process={process_memory_mb()} MB",
+        f"this process={process_memory_mb()} MB",
         flush=True,
     )
