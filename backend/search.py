@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from flashrank import Ranker, RerankRequest
+import threading
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
@@ -88,19 +88,25 @@ def hybrid_search(db: Session, workspace_id: int, query: str, limit: int = 5):
     return [{**items[i], "score": round(scores[i], 4)} for i in best_ids]
 
 _ranker = None
+_ranker_lock = threading.Lock()
 
 
 def get_ranker():
     global _ranker
     if _ranker is None:
-        _ranker = Ranker(
-            model_name=os.getenv("RERANK_MODEL", "ms-marco-MiniLM-L-12-v2"),
-            cache_dir=os.path.join(tempfile.gettempdir(), "flashrank"),
-        )
+        with _ranker_lock:
+            if _ranker is None:
+                from flashrank import Ranker
+
+                _ranker = Ranker(
+                    model_name=os.getenv("RERANK_MODEL", "ms-marco-MiniLM-L-12-v2"),
+                    cache_dir=os.path.join(tempfile.gettempdir(), "flashrank"),
+                )
     return _ranker
 
 
 def rerank_search(db: Session, workspace_id: int, query: str, limit: int = 5):
+    from flashrank import RerankRequest
     candidates = hybrid_search(db, workspace_id, query, limit=15)
     if not candidates:
         return []
