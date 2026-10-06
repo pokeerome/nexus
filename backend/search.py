@@ -94,7 +94,7 @@ def get_ranker():
     global _ranker
     if _ranker is None:
         _ranker = Ranker(
-            model_name="ms-marco-MiniLM-L-12-v2",
+            model_name=os.getenv("RERANK_MODEL", "ms-marco-MiniLM-L-12-v2"),
             cache_dir=os.path.join(tempfile.gettempdir(), "flashrank"),
         )
     return _ranker
