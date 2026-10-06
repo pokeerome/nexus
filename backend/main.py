@@ -11,6 +11,7 @@ from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from mcp_server import mcp
+from memlog import log_memory
 from models import Chunk, Document, Membership, User, Workspace
 from schemas import (
     ChatRequest,
@@ -34,6 +35,7 @@ from tasks import ingest_document_task
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
     async with mcp.session_manager.run():
+        log_memory("app started")
         yield
 
 
@@ -262,7 +264,10 @@ async def agent_chat(
     messages.append(HumanMessage(content=data.question))
 
     async def event_stream():
-        async for event in stream_agent_events(get_model(), mcp_url, token, messages):
-            yield f"data: {json.dumps(event)}\n\n"
-
+        log_memory("agent request start")
+        try:
+            async for event in stream_agent_events(get_model(), mcp_url, token, messages):
+                yield f"data: {json.dumps(event)}\n\n"
+        finally:
+            log_memory("agent request end")
     return StreamingResponse(event_stream(), media_type="text/event-stream")
