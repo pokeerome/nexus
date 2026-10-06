@@ -1,8 +1,14 @@
 [
   {
     "history": [
-      {"role": "user", "content": "How many days of paid vacation does Northpeak give?"},
-      {"role": "assistant", "content": "Northpeak gives 20 days of paid vacation leave each year."}
+      {
+        "role": "user",
+        "content": "How many days of paid vacation does Northpeak give?"
+      },
+      {
+        "role": "assistant",
+        "content": "Northpeak gives 20 days of paid vacation leave each year."
+      }
     ],
     "question": "and how many sick days?",
     "expected_file": "employee_handbook_northpeak.txt",
@@ -10,8 +16,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "What are the working hours at Solmart?"},
-      {"role": "assistant", "content": "10:00 AM to 7:00 PM, Tuesday to Saturday."}
+      {
+        "role": "user",
+        "content": "What are the working hours at Solmart?"
+      },
+      {
+        "role": "assistant",
+        "content": "10:00 AM to 7:00 PM, Tuesday to Saturday."
+      }
     ],
     "question": "can I work from home there?",
     "expected_file": "employee_handbook_solmart.txt",
@@ -19,8 +31,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How often are performance reviews held at Northpeak?"},
-      {"role": "assistant", "content": "Three times a year, in February, June, and October."}
+      {
+        "role": "user",
+        "content": "How often are performance reviews held at Northpeak?"
+      },
+      {
+        "role": "assistant",
+        "content": "Three times a year, in February, June, and October."
+      }
     ],
     "question": "and how much are meals reimbursed on business trips?",
     "expected_file": "employee_handbook_northpeak.txt",
@@ -28,8 +46,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How long is the return window at Northpeak?"},
-      {"role": "assistant", "content": "Items can be returned within 45 days of delivery."}
+      {
+        "role": "user",
+        "content": "How long is the return window at Northpeak?"
+      },
+      {
+        "role": "assistant",
+        "content": "Items can be returned within 45 days of delivery."
+      }
     ],
     "question": "what about electronics?",
     "expected_file": "return_policy_northpeak.txt",
@@ -37,8 +61,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "What is the return window at Solmart?"},
-      {"role": "assistant", "content": "Items can be returned within 14 days of purchase."}
+      {
+        "role": "user",
+        "content": "What is the return window at Solmart?"
+      },
+      {
+        "role": "assistant",
+        "content": "Items can be returned within 14 days of purchase."
+      }
     ],
     "question": "and how fast do refunds arrive?",
     "expected_file": "return_policy_solmart.txt",
@@ -46,8 +76,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How long do I have to return an item to Brightwave?"},
-      {"role": "assistant", "content": "Brightwave accepts returns within 30 days of delivery."}
+      {
+        "role": "user",
+        "content": "How long do I have to return an item to Brightwave?"
+      },
+      {
+        "role": "assistant",
+        "content": "Brightwave accepts returns within 30 days of delivery."
+      }
     ],
     "question": "do they charge a fee for opened laptops?",
     "expected_file": "product_return_policy.txt",
@@ -55,8 +91,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How should I brew green tea?"},
-      {"role": "assistant", "content": "Use water at 80 degrees Celsius and steep for 2 minutes."}
+      {
+        "role": "user",
+        "content": "How should I brew green tea?"
+      },
+      {
+        "role": "assistant",
+        "content": "Use water at 80 degrees Celsius and steep for 2 minutes."
+      }
     ],
     "question": "how should I store it?",
     "expected_file": "tea_brewing_guide.md",
@@ -64,8 +106,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How do I make pour-over coffee?"},
-      {"role": "assistant", "content": "Use a ratio of 1 to 16 with water at 92 to 96 degrees Celsius."}
+      {
+        "role": "user",
+        "content": "How do I make pour-over coffee?"
+      },
+      {
+        "role": "assistant",
+        "content": "Use a ratio of 1 to 16 with water at 92 to 96 degrees Celsius."
+      }
     ],
     "question": "and how long should I brew cold brew?",
     "expected_file": "coffee_brewing_guide.md",
@@ -73,8 +121,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How does try and except work in Python?"},
-      {"role": "assistant", "content": "Code that might fail goes in a try block, and the except block handles the error."}
+      {
+        "role": "user",
+        "content": "How does try and except work in Python?"
+      },
+      {
+        "role": "assistant",
+        "content": "Code that might fail goes in a try block, and the except block handles the error."
+      }
     ],
     "question": "what does finally do?",
     "expected_file": "python_error_handling.md",
@@ -82,8 +136,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "How do I handle errors in JavaScript with try and catch?"},
-      {"role": "assistant", "content": "Put risky code in a try block and handle the error in the catch block."}
+      {
+        "role": "user",
+        "content": "How do I handle errors in JavaScript with try and catch?"
+      },
+      {
+        "role": "assistant",
+        "content": "Put risky code in a try block and handle the error in the catch block."
+      }
     ],
     "question": "how do I keep the original cause?",
     "expected_file": "javascript_error_handling.md",
@@ -91,8 +151,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "What should I do during an earthquake?"},
-      {"role": "assistant", "content": "Drop, Cover, and Hold On until the shaking stops."}
+      {
+        "role": "user",
+        "content": "What should I do during an earthquake?"
+      },
+      {
+        "role": "assistant",
+        "content": "Drop, Cover, and Hold On until the shaking stops."
+      }
     ],
     "question": "what about after it stops?",
     "expected_file": "earthquake_safety_plan.txt",
@@ -100,8 +166,14 @@
   },
   {
     "history": [
-      {"role": "user", "content": "What should be in a typhoon go-bag?"},
-      {"role": "assistant", "content": "Drinking water, canned food, a flashlight, a first aid kit, and copies of your IDs."}
+      {
+        "role": "user",
+        "content": "What should be in a typhoon go-bag?"
+      },
+      {
+        "role": "assistant",
+        "content": "Drinking water, canned food, a flashlight, a first aid kit, and copies of your IDs."
+      }
     ],
     "question": "how much water per person?",
     "expected_file": "typhoon_safety_plan.txt",
@@ -109,11 +181,111 @@
   },
   {
     "history": [
-      {"role": "user", "content": "What should I put in an earthquake kit?"},
-      {"role": "assistant", "content": "Water, canned food, a whistle, dust masks, a radio, and a first aid kit."}
+      {
+        "role": "user",
+        "content": "What should I put in an earthquake kit?"
+      },
+      {
+        "role": "assistant",
+        "content": "Water, canned food, a whistle, dust masks, a radio, and a first aid kit."
+      }
     ],
     "question": "how much water per person?",
     "expected_file": "earthquake_safety_plan.txt",
     "answer_text": "4 liters per person per day"
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "How many days of paid vacation does Northpeak give?"
+      },
+      {
+        "role": "assistant",
+        "content": "Northpeak gives 20 days of paid vacation leave each year."
+      }
+    ],
+    "question": "How long should oolong tea steep?",
+    "expected_file": "tea_brewing_guide.md",
+    "answer_text": "Steep for 3 minutes",
+    "expect_unchanged": true
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "What should be in a typhoon go-bag?"
+      },
+      {
+        "role": "assistant",
+        "content": "Drinking water, canned food, a flashlight, a first aid kit, and copies of your IDs."
+      }
+    ],
+    "question": "What fee is charged for opened laptops at Northpeak?",
+    "expected_file": "return_policy_northpeak.txt",
+    "answer_text": "20 percent restocking fee",
+    "expect_unchanged": true
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "How does try and except work in Python?"
+      },
+      {
+        "role": "assistant",
+        "content": "Code that might fail goes in a try block, and the except block handles the error."
+      }
+    ],
+    "question": "Which JavaScript error appears when a variable is not defined?",
+    "expected_file": "javascript_error_handling.md",
+    "answer_text": "ReferenceError",
+    "expect_unchanged": true
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "What should I put in an earthquake kit?"
+      },
+      {
+        "role": "assistant",
+        "content": "Water, canned food, a whistle, dust masks, a radio, and a first aid kit."
+      }
+    ],
+    "question": "What are the standard working hours at Solmart?",
+    "expected_file": "employee_handbook_solmart.txt",
+    "answer_text": "10:00 AM to 7:00 PM",
+    "expect_unchanged": true
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "What does the document say about bugs?"
+      },
+      {
+        "role": "assistant",
+        "content": "It says to include real bugs that were fixed, with the root cause and the fix."
+      }
+    ],
+    "question": "how much is the fare",
+    "expect_unchanged": true
+  },
+  {
+    "history": [
+      {
+        "role": "user",
+        "content": "How much does visitor parking cost?"
+      },
+      {
+        "role": "assistant",
+        "content": "Visitor parking costs 40 pesos per hour, with a daily limit of 200 pesos."
+      }
+    ],
+    "question": "What is the no-show fee?",
+    "expected_file": "Harbor_Light_Patient_Handbook_scan.pdf",
+    "answer_text": "300 pesos",
+    "expect_unchanged": true
   }
 ]

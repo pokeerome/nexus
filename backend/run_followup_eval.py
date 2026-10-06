@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 
 from chat import rewrite_query
@@ -35,41 +36,58 @@ def summarize(ranks):
     }
 
 
+def normalize(text):
+    return " ".join(re.sub(r"[^a-z0-9 ]", "", text.lower()).split())
+
+
 ranks_without = []
 ranks_with = []
+unchanged_ok = 0
+unchanged_total = 0
 details = []
 
 for case in cases:
     rewritten = rewrite_query(case["history"], case["question"])
-    rank_without = find_rank(case["question"], case)
-    rank_with = find_rank(rewritten, case)
+    entry = {"question": case["question"], "rewritten": rewritten}
 
-    ranks_without.append(rank_without)
-    ranks_with.append(rank_with)
-    details.append(
-        {
-            "question": case["question"],
-            "rewritten": rewritten,
-            "rank_without_rewrite": rank_without,
-            "rank_with_rewrite": rank_with,
-        }
-    )
-
-    print("Follow-up:", case["question"])
+    print("Question:", case["question"])
     print("  Rewritten:", rewritten)
-    print("  Rank without rewriting:", rank_without, "| with rewriting:", rank_with)
+
+    if case.get("expected_file"):
+        rank_without = find_rank(case["question"], case)
+        rank_with = find_rank(rewritten, case)
+        ranks_without.append(rank_without)
+        ranks_with.append(rank_with)
+        entry["rank_without_rewrite"] = rank_without
+        entry["rank_with_rewrite"] = rank_with
+        print("  Rank without rewriting:", rank_without, "| with rewriting:", rank_with)
+
+    if case.get("expect_unchanged"):
+        same = normalize(rewritten) == normalize(case["question"])
+        unchanged_total += 1
+        unchanged_ok += int(same)
+        entry["kept_unchanged"] = same
+        print("  Kept unchanged (expected):", same)
+
+    details.append(entry)
 
 without = summarize(ranks_without)
 with_rewrite = summarize(ranks_with)
 
 print()
-print("Cases:", len(cases))
+print("Retrieval cases:", len(ranks_with))
 print("WITHOUT rewriting:", without)
 print("WITH rewriting:   ", with_rewrite)
+print(f"Topic changes kept unchanged: {unchanged_ok}/{unchanged_total}")
 
 with open(f"eval_results_{LABEL}.json", "w", encoding="utf-8") as f:
     json.dump(
-        {"without_rewrite": without, "with_rewrite": with_rewrite, "details": details},
+        {
+            "without_rewrite": without,
+            "with_rewrite": with_rewrite,
+            "kept_unchanged": f"{unchanged_ok}/{unchanged_total}",
+            "details": details,
+        },
         f,
         indent=2,
     )

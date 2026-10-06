@@ -1,0 +1,133 @@
+{
+  "without_rewrite": {
+    "hit@1": 0.611,
+    "hit@5": 1.0,
+    "mrr": 0.78
+  },
+  "with_rewrite": {
+    "hit@1": 1.0,
+    "hit@5": 1.0,
+    "mrr": 1.0
+  },
+  "kept_unchanged": "6/6",
+  "details": [
+    {
+      "question": "and how many sick days?",
+      "rewritten": "How many sick days does Northpeak give?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "can I work from home there?",
+      "rewritten": "can I work from home there?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how much are meals reimbursed on business trips?",
+      "rewritten": "How much are meals reimbursed on business trips at Northpeak?",
+      "rank_without_rewrite": 3,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what about electronics?",
+      "rewritten": "How long is the return window at Northpeak for electronics?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how fast do refunds arrive?",
+      "rewritten": "How fast do refunds arrive at Solmart?",
+      "rank_without_rewrite": 5,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "do they charge a fee for opened laptops?",
+      "rewritten": "Does Brightwave charge a fee for opened laptops?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how should I store it?",
+      "rewritten": "How should I store green tea?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "and how long should I brew cold brew?",
+      "rewritten": "How long should I brew cold brew coffee?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what does finally do?",
+      "rewritten": "What does the finally block do in Python?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how do I keep the original cause?",
+      "rewritten": "How do I keep the original cause of an error when handling errors in JavaScript with try and catch?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "what about after it stops?",
+      "rewritten": "What should I do after an earthquake stops?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much drinking water should be in a typhoon go-bag per person?",
+      "rank_without_rewrite": 2,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "how much water per person?",
+      "rewritten": "How much water should I include in an earthquake kit per person?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1
+    },
+    {
+      "question": "How long should oolong tea steep?",
+      "rewritten": "How long should oolong tea steep?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1,
+      "kept_unchanged": true
+    },
+    {
+      "question": "What fee is charged for opened laptops at Northpeak?",
+      "rewritten": "What fee is charged for opened laptops at Northpeak?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1,
+      "kept_unchanged": true
+    },
+    {
+      "question": "Which JavaScript error appears when a variable is not defined?",
+      "rewritten": "Which JavaScript error appears when a variable is not defined?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1,
+      "kept_unchanged": true
+    },
+    {
+      "question": "What are the standard working hours at Solmart?",
+      "rewritten": "What are the standard working hours at Solmart?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1,
+      "kept_unchanged": true
+    },
+    {
+      "question": "how much is the fare",
+      "rewritten": "how much is the fare",
+      "kept_unchanged": true
+    },
+    {
+      "question": "What is the no-show fee?",
+      "rewritten": "What is the no-show fee?",
+      "rank_without_rewrite": 1,
+      "rank_with_rewrite": 1,
+      "kept_unchanged": true
+    }
+  ]
+}
