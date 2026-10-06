@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { streamChat } from "../api";
+import { streamAgent, streamChat } from "../api";
 import type { Source } from "../api";
 
 type Message = {
@@ -8,12 +8,14 @@ type Message = {
   content: string;
   sources?: Source[];
   searchedFor?: string;
+  steps?: string[];
 };
 
 export default function Chat({ workspaceId }: { workspaceId: number }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [agentMode, setAgentMode] = useState(false);
 
   function updateLast(change: (m: Message) => Message) {
     setMessages((prev) => {
@@ -42,14 +44,26 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
     ]);
 
     try {
-      await streamChat(
-        workspaceId,
-        question,
-        history,
-        (sources) => updateLast((m) => ({ ...m, sources })),
-        (token) => updateLast((m) => ({ ...m, content: m.content + token })),
-        (query) => updateLast((m) => ({ ...m, searchedFor: query })),
-      );
+      if (agentMode) {
+        await streamAgent(
+          workspaceId,
+          question,
+          history,
+          (step) =>
+            updateLast((m) => ({ ...m, steps: [...(m.steps ?? []), step] })),
+          (token) => updateLast((m) => ({ ...m, content: m.content + token })),
+          (message) => updateLast((m) => ({ ...m, content: message })),
+        );
+      } else {
+        await streamChat(
+          workspaceId,
+          question,
+          history,
+          (sources) => updateLast((m) => ({ ...m, sources })),
+          (token) => updateLast((m) => ({ ...m, content: m.content + token })),
+          (query) => updateLast((m) => ({ ...m, searchedFor: query })),
+        );
+      }
     } catch {
       updateLast((m) => ({
         ...m,
@@ -83,6 +97,13 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
               {m.content || (busy ? "Thinking..." : "")}
             </div>
 
+            {m.steps && m.steps.length > 0 && (
+              <ul className="text-slate-500 text-xs mt-1 space-y-0.5">
+                {m.steps.map((s, idx) => (
+                  <li key={idx}>{s}</li>
+                ))}
+              </ul>
+            )}
             {m.searchedFor && m.searchedFor !== messages[i - 1]?.content && (
               <p className="text-slate-500 text-xs mt-1">
                 Searched for: {m.searchedFor}
@@ -97,6 +118,15 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
         ))}
       </div>
 
+      <label className="flex items-center gap-2 text-sm text-slate-300 mb-3">
+        <input
+          type="checkbox"
+          checked={agentMode}
+          onChange={(e) => setAgentMode(e.target.checked)}
+          disabled={busy}
+        />
+        Agent mode (can search several times and compare files)
+      </label>
       <form onSubmit={handleSend} className="flex gap-2">
         <input
           type="text"

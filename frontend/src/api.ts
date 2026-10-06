@@ -126,3 +126,54 @@ export function deleteDocument(workspaceId: number, documentId: number) {
     method: "DELETE",
   });
 }
+
+function describeStep(name: string, args: Record<string, unknown>) {
+  if (name === "search_documents") {
+    return `Searching documents for: ${String(args.query ?? "")}`;
+  }
+  if (name === "list_documents") return "Listing your files";
+  return `Using tool: ${name}`;
+}
+
+export async function streamAgent(
+  workspaceId: number,
+  question: string,
+  history: ChatTurn[],
+  onStep: (text: string) => void,
+  onToken: (token: string) => void,
+  onError: (message: string) => void,
+) {
+  const res = await fetch(`${API_URL}/workspaces/${workspaceId}/agent`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ question, history }),
+  });
+
+  if (!res.ok || !res.body) throw new Error("Agent failed");
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop() ?? "";
+
+    for (const part of parts) {
+      if (!part.startsWith("data: ")) continue;
+      const event = JSON.parse(part.slice(6));
+      if (event.type === "tool_call") {
+        onStep(describeStep(event.data.name, event.data.args ?? {}));
+      }
+      if (event.type === "token") onToken(event.data);
+      if (event.type === "error") onError(event.data);
+    }
+  }
+}

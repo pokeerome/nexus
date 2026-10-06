@@ -17,6 +17,8 @@ def get_current_user(
 ) -> User:
     try:
         payload = jwt.decode(creds.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("typ") == "mcp":
+            raise ValueError("MCP tokens cannot be used to log in")
         user_id = int(payload["sub"])
     except (jwt.PyJWTError, KeyError, ValueError):
         raise HTTPException(status_code=401, detail="Invalid or expired token")

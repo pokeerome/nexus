@@ -1,3 +1,4 @@
+import contextlib
 import json
 import os
 import uuid
@@ -9,6 +10,7 @@ from deps import get_current_user, require_membership
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from mcp_server import mcp
 from models import Chunk, Document, Membership, User, Workspace
 from schemas import (
     ChatRequest,
@@ -18,12 +20,25 @@ from schemas import (
     TokenResponse,
 )
 from search import search_chunks
-from security import create_access_token, hash_password, verify_password
+from security import (
+    create_access_token,
+    create_mcp_token,
+    hash_password,
+    verify_password,
+)
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 from tasks import ingest_document_task
 
-app = FastAPI()
+
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with mcp.session_manager.run():
+        yield
+
+
+app = FastAPI(lifespan=lifespan)
+app.mount("/mcp", mcp.streamable_http_app())
 
 UPLOAD_DIR = Path("uploads")
 ALLOWED_TYPES = {".pdf", ".txt", ".md", ".docx", ".csv"}
@@ -227,3 +242,27 @@ def delete_document(
         pass
 
     return {"deleted": document_id}
+
+@app.post("/workspaces/{workspace_id}/agent")
+async def agent_chat(
+    workspace_id: int,
+    data: ChatRequest,
+    membership: Membership = Depends(require_membership),
+):
+    from agent import get_model, stream_agent_events
+    from langchain_core.messages import AIMessage, HumanMessage
+
+    token = create_mcp_token(membership.user_id, workspace_id)
+    mcp_url = os.getenv("MCP_URL", f"http://127.0.0.1:{os.getenv('PORT', '8000')}/mcp/")
+
+    messages = [
+        (HumanMessage if m.role == "user" else AIMessage)(content=m.content)
+        for m in data.history[-6:]
+    ]
+    messages.append(HumanMessage(content=data.question))
+
+    async def event_stream():
+        async for event in stream_agent_events(get_model(), mcp_url, token, messages):
+            yield f"data: {json.dumps(event)}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
