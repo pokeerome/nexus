@@ -81,6 +81,11 @@ export type Source = { filename: string; chunk_index: number; score: number };
 
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
+async function errorMessage(res: Response, fallback: string) {
+  const err = await res.json().catch(() => ({}));
+  return typeof err.detail === "string" ? err.detail : fallback;
+}
+
 export async function streamChat(
   workspaceId: number,
   question: string,
@@ -98,7 +103,8 @@ export async function streamChat(
     body: JSON.stringify({ question, history }),
   });
 
-  if (!res.ok || !res.body) throw new Error("Chat failed");
+  if (!res.ok) throw new Error(await errorMessage(res, "Chat failed"));
+  if (!res.body) throw new Error("Chat failed");
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
@@ -153,7 +159,8 @@ export async function streamAgent(
     body: JSON.stringify({ question, history }),
   });
 
-  if (!res.ok || !res.body) throw new Error("Agent failed");
+  if (!res.ok) throw new Error(await errorMessage(res, "Agent failed"));
+  if (!res.body) throw new Error("Agent failed");
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();

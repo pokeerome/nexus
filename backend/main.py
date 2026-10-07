@@ -10,6 +10,14 @@ from deps import get_current_user, require_membership, require_role
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from limiter import (
+    LOGIN_FAIL_LIMIT,
+    enabled,
+    limiter,
+    rate_limit,
+    rate_limit_global,
+    too_many,
+)
 from mcp_server import mcp
 from memlog import log_memory
 from models import Chunk, Document, Membership, User, Workspace
@@ -69,7 +77,11 @@ def health():
 
 
 @app.post("/auth/signup", response_model=TokenResponse)
-def signup(data: SignupRequest, db: Session = Depends(get_db)):
+def signup(
+    data: SignupRequest,
+    db: Session = Depends(get_db),
+    _limit: None = Depends(rate_limit_global("signup_global")),
+):
     existing = db.scalar(select(User).where(User.email == data.email))
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -87,10 +99,20 @@ def signup(data: SignupRequest, db: Session = Depends(get_db)):
 
 @app.post("/auth/login", response_model=TokenResponse)
 def login(data: LoginRequest, db: Session = Depends(get_db)):
+    fail_key = f"login_fail:{data.email.lower()}"
+    fail_limit, fail_window = LOGIN_FAIL_LIMIT
+    if enabled():
+        failures, seconds_left = limiter.count(fail_key)
+        if failures >= fail_limit:
+            too_many(seconds_left)
+
     user = db.scalar(select(User).where(User.email == data.email))
     if not user or not verify_password(data.password, user.hashed_password):
+        if enabled():
+            limiter.hit(fail_key, fail_limit, fail_window)
         raise HTTPException(status_code=401, detail="Wrong email or password")
 
+    limiter.reset(fail_key)
     return TokenResponse(access_token=create_access_token(user.id))
 
 @app.get("/auth/me")
@@ -126,6 +148,7 @@ def upload_document(
     workspace_id: int,
     file: UploadFile = File(...),
     membership: Membership = Depends(require_role("member")),
+    _limit: None = Depends(rate_limit("upload")),
     db: Session = Depends(get_db),
 ):
     ext = Path(file.filename).suffix.lower()
@@ -199,6 +222,7 @@ def search(
     workspace_id: int,
     data: SearchRequest,
     membership: Membership = Depends(require_membership),
+    _limit: None = Depends(rate_limit("search")),
     db: Session = Depends(get_db),
 ):
     return search_chunks(db, workspace_id, data.query, data.limit)
@@ -208,6 +232,8 @@ def chat(
     workspace_id: int,
     data: ChatRequest,
     membership: Membership = Depends(require_membership),
+    _limit: None = Depends(rate_limit("chat")),
+    _global: None = Depends(rate_limit_global("llm_global")),
     db: Session = Depends(get_db),
 ):
     history = [m.model_dump() for m in data.history][-6:]
@@ -258,6 +284,8 @@ async def agent_chat(
     workspace_id: int,
     data: ChatRequest,
     membership: Membership = Depends(require_membership),
+    _limit: None = Depends(rate_limit("agent")),
+    _global: None = Depends(rate_limit_global("llm_global")),
 ):
     from agent import get_model, stream_agent_events
     from langchain_core.messages import AIMessage, HumanMessage
@@ -308,6 +336,7 @@ def add_member(
     workspace_id: int,
     data: MemberAdd,
     membership: Membership = Depends(require_role("owner")),
+    _limit: None = Depends(rate_limit("members")),
     db: Session = Depends(get_db),
 ):
     user = db.scalar(select(User).where(User.email == data.email))

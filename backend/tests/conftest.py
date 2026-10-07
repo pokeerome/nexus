@@ -31,6 +31,8 @@ if REAL_URL:
 os.environ["DATABASE_URL"] = TEST_URL
 os.environ["CELERY_EAGER"] = "1"  # run file reading inside the request, no Redis needed
 os.environ["SEARCH_MODE"] = "hybrid"  # no reranker model needed
+os.environ["RATE_LIMITS"] = "off"  # most tests make many requests; the rate-limit tests turn it on
+os.environ["REDIS_URL"] = ""  # tests count requests in memory, never in your real Redis
 os.environ.setdefault("OPENAI_API_KEY", "not-used-in-tests")
 
 

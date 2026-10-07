@@ -64,10 +64,10 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
           (query) => updateLast((m) => ({ ...m, searchedFor: query })),
         );
       }
-    } catch {
+    } catch (err) {
       updateLast((m) => ({
         ...m,
-        content: "Something went wrong. Please try again.",
+        content: (err as Error).message || "Something went wrong. Please try again.",
       }));
     } finally {
       setBusy(false);
