@@ -42,3 +42,18 @@ def require_membership(
     if not membership:
         raise HTTPException(status_code=403, detail="You are not a member of this workspace")
     return membership
+
+ROLE_RANK = {"viewer": 1, "member": 2, "owner": 3}
+
+
+def require_role(min_role: str):
+    """Like require_membership, but the member must also have at least this role."""
+
+    def checker(membership: Membership = Depends(require_membership)) -> Membership:
+        if ROLE_RANK.get(membership.role, 0) < ROLE_RANK[min_role]:
+            raise HTTPException(
+                status_code=403, detail=f"This needs the {min_role} role or higher"
+            )
+        return membership
+
+    return checker

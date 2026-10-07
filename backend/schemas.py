@@ -29,3 +29,11 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     question: str
     history: list[ChatMessage] = []
+
+class MemberAdd(BaseModel):
+    email: EmailStr
+    role: Literal["owner", "member", "viewer"] = "member"
+
+
+class MemberRoleUpdate(BaseModel):
+    role: Literal["owner", "member", "viewer"]

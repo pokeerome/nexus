@@ -6,7 +6,7 @@ from pathlib import Path
 
 from chat import rewrite_query, stream_answer
 from database import get_db
-from deps import get_current_user, require_membership
+from deps import get_current_user, require_membership, require_role
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -16,6 +16,8 @@ from models import Chunk, Document, Membership, User, Workspace
 from schemas import (
     ChatRequest,
     LoginRequest,
+    MemberAdd,
+    MemberRoleUpdate,
     SearchRequest,
     SignupRequest,
     TokenResponse,
@@ -27,7 +29,7 @@ from security import (
     hash_password,
     verify_password,
 )
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 from tasks import ingest_document_task
 
@@ -122,7 +124,7 @@ def doc_to_dict(doc: Document):
 def upload_document(
     workspace_id: int,
     file: UploadFile = File(...),
-    membership: Membership = Depends(require_membership),
+    membership: Membership = Depends(require_role("member")),
     db: Session = Depends(get_db),
 ):
     ext = Path(file.filename).suffix.lower()
@@ -222,7 +224,7 @@ def chat(
 def delete_document(
     workspace_id: int,
     document_id: int,
-    membership: Membership = Depends(require_membership),
+    membership: Membership = Depends(require_role("member")),
     db: Session = Depends(get_db),
 ):
     doc = db.scalar(
@@ -232,6 +234,11 @@ def delete_document(
     )
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
+
+    if membership.role != "owner" and doc.uploaded_by != membership.user_id:
+        raise HTTPException(
+            status_code=403, detail="You can only remove files that you uploaded"
+        )
 
     stored_path = doc.stored_path
     db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
@@ -271,3 +278,102 @@ async def agent_chat(
         finally:
             log_memory("agent request end")
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+def count_owners(db: Session, workspace_id: int) -> int:
+    return db.scalar(
+        select(func.count())
+        .select_from(Membership)
+        .where(Membership.workspace_id == workspace_id, Membership.role == "owner")
+    )
+
+
+@app.get("/workspaces/{workspace_id}/members")
+def list_members(
+    workspace_id: int,
+    membership: Membership = Depends(require_membership),
+    db: Session = Depends(get_db),
+):
+    rows = db.execute(
+        select(User.id, User.email, Membership.role)
+        .join(Membership, Membership.user_id == User.id)
+        .where(Membership.workspace_id == workspace_id)
+        .order_by(Membership.id)
+    ).all()
+    return [{"user_id": r.id, "email": r.email, "role": r.role} for r in rows]
+
+
+@app.post("/workspaces/{workspace_id}/members")
+def add_member(
+    workspace_id: int,
+    data: MemberAdd,
+    membership: Membership = Depends(require_role("owner")),
+    db: Session = Depends(get_db),
+):
+    user = db.scalar(select(User).where(User.email == data.email))
+    if not user:
+        raise HTTPException(
+            status_code=404, detail="No user with that email. They need to sign up first."
+        )
+
+    existing = db.scalar(
+        select(Membership).where(
+            Membership.user_id == user.id, Membership.workspace_id == workspace_id
+        )
+    )
+    if existing:
+        raise HTTPException(status_code=400, detail="That user is already a member")
+
+    db.add(Membership(user_id=user.id, workspace_id=workspace_id, role=data.role))
+    db.commit()
+    return {"user_id": user.id, "email": user.email, "role": data.role}
+
+
+@app.patch("/workspaces/{workspace_id}/members/{user_id}")
+def change_member_role(
+    workspace_id: int,
+    user_id: int,
+    data: MemberRoleUpdate,
+    membership: Membership = Depends(require_role("owner")),
+    db: Session = Depends(get_db),
+):
+    target = db.scalar(
+        select(Membership).where(
+            Membership.user_id == user_id, Membership.workspace_id == workspace_id
+        )
+    )
+    if not target:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    if target.role == "owner" and data.role != "owner" and count_owners(db, workspace_id) <= 1:
+        raise HTTPException(status_code=400, detail="A workspace needs at least one owner")
+
+    target.role = data.role
+    db.commit()
+    return {"user_id": user_id, "role": data.role}
+
+
+@app.delete("/workspaces/{workspace_id}/members/{user_id}")
+def remove_member(
+    workspace_id: int,
+    user_id: int,
+    membership: Membership = Depends(require_membership),
+    db: Session = Depends(get_db),
+):
+    # Owners can remove anyone. Everyone else can only remove themselves (leave).
+    if user_id != membership.user_id and membership.role != "owner":
+        raise HTTPException(status_code=403, detail="Only an owner can remove other members")
+
+    target = db.scalar(
+        select(Membership).where(
+            Membership.user_id == user_id, Membership.workspace_id == workspace_id
+        )
+    )
+    if not target:
+        raise HTTPException(status_code=404, detail="Member not found")
+
+    if target.role == "owner" and count_owners(db, workspace_id) <= 1:
+        raise HTTPException(status_code=400, detail="A workspace needs at least one owner")
+
+    db.delete(target)
+    db.commit()
+    return {"removed": user_id}
