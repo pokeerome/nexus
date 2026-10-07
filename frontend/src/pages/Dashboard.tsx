@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { clearToken, getMe, getToken } from "../api";
 import type { Me } from "../api";
-import Documents from "../components/Documents";
 import Chat from "../components/Chat";
+import Documents from "../components/Documents";
+import Members from "../components/Members";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [me, setMe] = useState<Me | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!getToken()) {
@@ -20,7 +23,7 @@ export default function Dashboard() {
         clearToken();
         navigate("/login");
       });
-  }, [navigate]);
+  }, [navigate, reloadCount]);
 
   function handleLogout() {
     clearToken();
@@ -34,6 +37,8 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const current = me.workspaces.find((w) => w.id === selectedId) ?? me.workspaces[0];
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-8">
@@ -50,20 +55,50 @@ export default function Dashboard() {
 
         <p className="text-slate-300">Logged in as {me.email}</p>
 
-        <div className="bg-slate-800 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-3">Your workspaces</h2>
-          <ul className="space-y-2">
-            {me.workspaces.map((w) => (
-              <li key={w.id} className="flex justify-between">
-                <span>{w.name}</span>
-                <span className="text-slate-400">{w.role}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {!current ? (
+          <div className="bg-slate-800 p-6 rounded-xl text-slate-300">
+            You are not a member of any workspace.
+          </div>
+        ) : (
+          <>
+            <div className="bg-slate-800 p-6 rounded-xl flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">Workspace</h2>
+                <p className="text-slate-400 text-sm">Your role: {current.role}</p>
+              </div>
+              {me.workspaces.length > 1 ? (
+                <select
+                  value={current.id}
+                  onChange={(e) => setSelectedId(Number(e.target.value))}
+                  className="p-2 rounded bg-slate-700 text-white"
+                >
+                  {me.workspaces.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name} ({w.role})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className="text-lg">{current.name}</span>
+              )}
+            </div>
 
-        {me.workspaces[0] && <Documents workspaceId={me.workspaces[0].id} />}
-        {me.workspaces[0] && <Chat workspaceId={me.workspaces[0].id} />}
+            <Documents
+              key={`docs-${current.id}`}
+              workspaceId={current.id}
+              role={current.role}
+              userId={me.id}
+            />
+            <Chat key={`chat-${current.id}`} workspaceId={current.id} />
+            <Members
+              key={`members-${current.id}`}
+              workspaceId={current.id}
+              myRole={current.role}
+              myUserId={me.id}
+              onChanged={() => setReloadCount((n) => n + 1)}
+            />
+          </>
+        )}
       </div>
     </div>
   );

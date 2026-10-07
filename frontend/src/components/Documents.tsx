@@ -3,13 +3,23 @@ import type { ChangeEvent } from "react";
 import { deleteDocument, listDocuments, uploadDocument } from "../api";
 import type { DocumentInfo } from "../api";
 
-export default function Documents({ workspaceId }: { workspaceId: number }) {
+type Props = {
+  workspaceId: number;
+  role: string;
+  userId: number;
+};
+
+export default function Documents({ workspaceId, role, userId }: Props) {
   const [docs, setDocs] = useState<DocumentInfo[]>([]);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [reloadCount, setReloadCount] = useState(0);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
   const fileInput = useRef<HTMLInputElement>(null);
+
+  const canUpload = role === "owner" || role === "member";
+  const canRemove = (d: DocumentInfo) =>
+    role === "owner" || (role === "member" && d.uploaded_by === userId);
 
   useEffect(() => {
     let cancelled = false;
@@ -27,7 +37,7 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
     };
   }, [workspaceId, reloadCount]);
 
-    useEffect(() => {
+  useEffect(() => {
     const pending = docs.some(
       (d) => d.status === "queued" || d.status === "processing",
     );
@@ -73,23 +83,29 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
     <div className="bg-slate-800 p-6 rounded-xl">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Documents</h2>
-        <label className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 cursor-pointer">
-          {uploading ? "Uploading..." : "Upload file"}
-          <input
-            ref={fileInput}
-            type="file"
-            accept=".pdf,.txt,.md,.docx,.csv"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="hidden"
-          />
-        </label>
+        {canUpload ? (
+          <label className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 cursor-pointer">
+            {uploading ? "Uploading..." : "Upload file"}
+            <input
+              ref={fileInput}
+              type="file"
+              accept=".pdf,.txt,.md,.docx,.csv"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="hidden"
+            />
+          </label>
+        ) : (
+          <span className="text-slate-400 text-sm">View only</span>
+        )}
       </div>
 
       {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
 
       {docs.length === 0 ? (
-        <p className="text-slate-400">No documents yet. Upload your first file.</p>
+        <p className="text-slate-400">
+          {canUpload ? "No documents yet. Upload your first file." : "No documents yet."}
+        </p>
       ) : (
         <ul className="space-y-2">
           {docs.map((d) => (
@@ -100,13 +116,15 @@ export default function Documents({ workspaceId }: { workspaceId: number }) {
                   <span className="text-slate-400 text-sm">
                     {(d.size_bytes / 1024).toFixed(1)} KB · {d.status}
                   </span>
-                  <button
-                    onClick={() => handleDelete(d)}
-                    disabled={deletingId === d.id}
-                    className="text-red-400 hover:text-red-300 text-sm disabled:opacity-50"
-                  >
-                    {deletingId === d.id ? "Removing..." : "Remove"}
-                  </button>
+                  {canRemove(d) && (
+                    <button
+                      onClick={() => handleDelete(d)}
+                      disabled={deletingId === d.id}
+                      className="text-red-400 hover:text-red-300 text-sm disabled:opacity-50"
+                    >
+                      {deletingId === d.id ? "Removing..." : "Remove"}
+                    </button>
+                  )}
                 </span>
               </div>
               {d.error && <p className="text-red-400 text-xs">{d.error}</p>}

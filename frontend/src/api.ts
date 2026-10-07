@@ -60,6 +60,7 @@ export type DocumentInfo = {
   size_bytes: number;
   status: string;
   error: string | null;
+  uploaded_by: number;
   created_at: string;
 };
 
@@ -176,4 +177,31 @@ export async function streamAgent(
       if (event.type === "error") onError(event.data);
     }
   }
+}
+
+export type Role = "owner" | "member" | "viewer";
+export type MemberInfo = { user_id: number; email: string; role: Role };
+
+export function listMembers(workspaceId: number): Promise<MemberInfo[]> {
+  return request(`/workspaces/${workspaceId}/members`);
+}
+
+export function addMember(workspaceId: number, email: string, role: Role) {
+  return request(`/workspaces/${workspaceId}/members`, {
+    method: "POST",
+    body: JSON.stringify({ email, role }),
+  });
+}
+
+export function changeMemberRole(workspaceId: number, userId: number, role: Role) {
+  return request(`/workspaces/${workspaceId}/members/${userId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ role }),
+  });
+}
+
+export function removeMember(workspaceId: number, userId: number) {
+  return request(`/workspaces/${workspaceId}/members/${userId}`, {
+    method: "DELETE",
+  });
 }

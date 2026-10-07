@@ -118,3 +118,13 @@ def test_removed_member_loses_access_to_files_and_search(client, new_user, uploa
     client.delete(f"/workspaces/{ws}/members/{member.user_id}", headers=owner.headers)
     assert client.get(f"/workspaces/{ws}/documents", headers=member.headers).status_code == 403
     assert client.post(f"/workspaces/{ws}/search", headers=member.headers, json={"query": "hello"}).status_code == 403
+
+
+def test_documents_show_who_uploaded_them(client, new_user, upload):
+    owner, member = new_user("owner"), new_user("member")
+    add_member(client, owner, member, "member")
+    ws = owner.workspace_id
+    doc = upload(member, ws, "members.txt", "member file").json()
+    assert doc["uploaded_by"] == member.user_id
+    listed = client.get(f"/workspaces/{ws}/documents", headers=owner.headers).json()
+    assert listed[0]["uploaded_by"] == member.user_id

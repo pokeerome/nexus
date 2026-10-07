@@ -116,6 +116,7 @@ def doc_to_dict(doc: Document):
         "size_bytes": doc.size_bytes,
         "status": doc.status,
         "error": doc.error_message,
+        "uploaded_by": doc.uploaded_by,
         "created_at": doc.created_at,
     }
 
