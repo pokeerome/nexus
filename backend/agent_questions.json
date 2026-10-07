@@ -1,0 +1,38 @@
+[
+  {"question": "How many days of paid vacation does Northpeak give?", "kind": "one file",
+   "facts": [["20 days"]], "docs": ["employee_handbook_northpeak.txt"]},
+  {"question": "How many days of sick leave does Solmart give?", "kind": "one file",
+   "facts": [["5 days"]], "docs": ["employee_handbook_solmart.txt"]},
+  {"question": "What is the daily limit for paying back meals on business trips at Northpeak?", "kind": "one file",
+   "facts": [["2,000", "2000"]], "docs": ["employee_handbook_northpeak.txt"]},
+
+  {"question": "Compare the paid vacation days at Northpeak and Solmart.", "kind": "two files",
+   "facts": [["20 days"], ["12 days"]], "docs": ["employee_handbook_northpeak.txt", "employee_handbook_solmart.txt"]},
+  {"question": "Which company gives more sick days, Northpeak or Solmart, and how many more?", "kind": "two files",
+   "facts": [["northpeak"], ["10 days", "10 sick"], ["5 days", "5 sick", "5 more", "five more"]],
+   "docs": ["employee_handbook_northpeak.txt", "employee_handbook_solmart.txt"]},
+  {"question": "Compare the return windows at Northpeak and Solmart.", "kind": "two files",
+   "facts": [["45 days"], ["14 days"]], "docs": ["return_policy_northpeak.txt", "return_policy_solmart.txt"]},
+  {"question": "Compare the restocking fee for opened laptops at Brightwave and Northpeak.", "kind": "two files",
+   "facts": [["15 percent", "15%"], ["20 percent", "20%"]], "docs": ["product_return_policy.txt", "return_policy_northpeak.txt"]},
+
+  {"question": "Which of Brightwave, Northpeak and Solmart refunds fastest, and how fast?", "kind": "three files",
+   "facts": [["solmart"], ["3 business days", "3 days", "three business days", "three days"]],
+   "docs": ["product_return_policy.txt", "return_policy_northpeak.txt", "return_policy_solmart.txt"]},
+  {"question": "Compare the warranty on electronics at Brightwave, Northpeak and Solmart.", "kind": "three files",
+   "facts": [["1-year", "1 year", "one year", "one-year"], ["2-year", "2 year", "two year", "two-year"], ["6-month", "6 month", "six month", "six-month"]],
+   "docs": ["product_return_policy.txt", "return_policy_northpeak.txt", "return_policy_solmart.txt"]},
+
+  {"question": "How much drinking water per person per day should I store for a typhoon go-bag versus an earthquake kit?", "kind": "two topics",
+   "facts": [["3 liters"], ["4 liters"]], "docs": ["typhoon_safety_plan.txt", "earthquake_safety_plan.txt"]},
+  {"question": "What water temperature is used for green tea and for pour-over coffee?", "kind": "two topics",
+   "facts": [["80"], ["92"]], "docs": ["tea_brewing_guide.md", "coffee_brewing_guide.md"]},
+  {"question": "Which files are about tea or coffee?", "kind": "file list",
+   "facts": [["tea_brewing_guide"], ["coffee_brewing_guide"]], "docs": []},
+  {"question": "How do I keep the original cause of an error in Python and in JavaScript?", "kind": "two topics",
+   "facts": [["from old_error", "raise"], ["cause: error", "{ cause", "cause"]],
+   "docs": ["python_error_handling.md", "javascript_error_handling.md"]},
+
+  {"question": "What is the salary at Northpeak?", "kind": "not in documents", "not_found": true},
+  {"question": "How much is the bus fare?", "kind": "not in documents", "not_found": true}
+]

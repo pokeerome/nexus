@@ -1,0 +1,155 @@
+{
+  "summary": {
+    "label": "agent1",
+    "questions": 15,
+    "correct": 15,
+    "accuracy": 1.0,
+    "avg_tool_calls": 1.8,
+    "avg_seconds": 4.8,
+    "by_kind": {
+      "one file": "3/3",
+      "two files": "4/4",
+      "three files": "2/2",
+      "two topics": "3/3",
+      "file list": "1/1",
+      "not in documents": "2/2"
+    }
+  },
+  "details": [
+    {
+      "question": "How many days of paid vacation does Northpeak give?",
+      "kind": "one file",
+      "correct": true,
+      "tool_calls": 1,
+      "seconds": 6.7,
+      "error": null,
+      "answer": "Northpeak provides every full-time employee with 20 days of paid vacation leave each year. Additionally, up to 10 unused vacation days can be carried over to the next year. This information is found in the Northpeak Employee Handbook (Sample)."
+    },
+    {
+      "question": "How many days of sick leave does Solmart give?",
+      "kind": "one file",
+      "correct": true,
+      "tool_calls": 1,
+      "seconds": 3.5,
+      "error": null,
+      "answer": "Solmart provides 5 days of sick leave each year for full-time employees, as stated in the Solmart Employee Handbook."
+    },
+    {
+      "question": "What is the daily limit for paying back meals on business trips at Northpeak?",
+      "kind": "one file",
+      "correct": true,
+      "tool_calls": 1,
+      "seconds": 3.0,
+      "error": null,
+      "answer": "The daily limit for paying back meals during business travel at Northpeak is 2,000 pesos per day, as stated in the Northpeak Employee Handbook (employee_handbook_northpeak.txt)."
+    },
+    {
+      "question": "Compare the paid vacation days at Northpeak and Solmart.",
+      "kind": "two files",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 4.9,
+      "error": null,
+      "answer": "The comparison of paid vacation days at Northpeak and Solmart is as follows:\n\n- Northpeak: Every full-time employee gets 20 days of paid vacation leave each year. Up to 10 unused vacation days can be carried over to the next year (from the employee_handbook_northpeak.txt).\n  \n- Solmart: Every full-time employee gets 12 days of paid vacation leave each year. Up to 3 unused vacation days can be carried over to the next year (from the employee_handbook_solmart.txt).\n\nIn summary, Northpeak offers more paid vacation days (20 days) compared to Solmart (12 days)."
+    },
+    {
+      "question": "Which company gives more sick days, Northpeak or Solmart, and how many more?",
+      "kind": "two files",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 3.7,
+      "error": null,
+      "answer": "Northpeak provides 10 days of sick leave each year, while Solmart offers 5 days. Therefore, Northpeak gives 5 more sick days than Solmart. This information is found in the Northpeak Employee Handbook and the Solmart Employee Handbook."
+    },
+    {
+      "question": "Compare the return windows at Northpeak and Solmart.",
+      "kind": "two files",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 4.8,
+      "error": null,
+      "answer": "The return windows for Northpeak and Solmart are as follows:\n\n- Northpeak:\n  - Items can be returned within 45 days of the delivery date.\n  - Electronics have a shorter return window of 21 days.\n  - Items must be unused and in the original packaging. (Source: return_policy_northpeak.txt)\n\n- Solmart:\n  - Items can be returned within 14 days of purchase.\n  - Electronics have a return window of 7 days, and opened electronics cannot be returned.\n  - Items must be unused and accompanied by the receipt. (Source: return_policy_solmart.txt)\n\nIn summary, Northpeak offers a longer return window compared to Solmart, especially for general items and electronics."
+    },
+    {
+      "question": "Compare the restocking fee for opened laptops at Brightwave and Northpeak.",
+      "kind": "two files",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 4.3,
+      "error": null,
+      "answer": "The restocking fees for opened laptops at Brightwave and Northpeak are as follows:\n\n- Brightwave charges a 15 percent restocking fee for opened laptops (from the file \"product_return_policy.txt\").\n- Northpeak charges a 20 percent restocking fee for opened laptops (from the file \"return_policy_northpeak.txt\"). \n\nIn summary, Brightwave has a lower restocking fee compared to Northpeak."
+    },
+    {
+      "question": "Which of Brightwave, Northpeak and Solmart refunds fastest, and how fast?",
+      "kind": "three files",
+      "correct": true,
+      "tool_calls": 3,
+      "seconds": 8.0,
+      "error": null,
+      "answer": "Here are the refund speeds for Brightwave, Northpeak, and Solmart:\n\n- Brightwave: Refunds are processed within 7 business days after the item is received (from the file \"product_return_policy.txt\").\n- Northpeak: Refunds are processed within 10 business days after the item is received (from the file \"return_policy_northpeak.txt\").\n- Solmart: Refunds are processed within 3 business days after the item is received (from the file \"return_policy_solmart.txt\").\n\nBased on this information, Solmart refunds the fastest, taking 3 business days."
+    },
+    {
+      "question": "Compare the warranty on electronics at Brightwave, Northpeak and Solmart.",
+      "kind": "three files",
+      "correct": true,
+      "tool_calls": 3,
+      "seconds": 6.6,
+      "error": null,
+      "answer": "Here is a comparison of the warranty on electronics at Brightwave, Northpeak, and Solmart:\n\n- **Brightwave**:\n  - Warranty: 1-year manufacturer warranty.\n  - Return window for electronics: 14 days.\n  - Opened laptops incur a 15% restocking fee.\n  - To make a warranty claim, you need to request a Return Merchandise Authorization (RMA) number (example: RMA-4471) (from product_return_policy.txt).\n\n- **Northpeak**:\n  - Warranty: 2-year manufacturer warranty.\n  - Return window for electronics: 21 days.\n  - Opened laptops incur a 20% restocking fee.\n  - To make a warranty claim, you need to request a Return Merchandise Authorization (RMA) number (example: RMA-9082) (from return_policy_northpeak.txt).\n\n- **Solmart**:\n  - Warranty: 6-month warranty.\n  - Return window for electronics: 7 days.\n  - Opened electronics cannot be returned.\n  - To make a warranty claim, you need to ask for a return slip number (example: SM-RET-310) at the service desk (from return_policy_solmart.txt).\n\nIn summary, Northpeak offers the longest warranty period at 2 years, while Solmart has the shortest at 6 months. Brightwave provides a 1-year warranty. The return windows also vary, with Solmart having the shortest return period for electronics at 7 days."
+    },
+    {
+      "question": "How much drinking water per person per day should I store for a typhoon go-bag versus an earthquake kit?",
+      "kind": "two topics",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 5.0,
+      "error": null,
+      "answer": "For your emergency preparations:\n\n- For a typhoon go-bag, you should store 3 liters of drinking water per person per day, enough for 3 days (typhoon_safety_plan.txt).\n- For an earthquake kit, you should store 4 liters of drinking water per person per day, enough for 5 days (earthquake_safety_plan.txt)."
+    },
+    {
+      "question": "What water temperature is used for green tea and for pour-over coffee?",
+      "kind": "two topics",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 4.0,
+      "error": null,
+      "answer": "For green tea, the recommended water temperature is 80 degrees Celsius. For pour-over coffee, the water temperature should be between 92 to 96 degrees Celsius. These details are found in the following files:\n\n- Green tea temperature: tea_brewing_guide.md\n- Pour-over coffee temperature: coffee_brewing_guide.md"
+    },
+    {
+      "question": "Which files are about tea or coffee?",
+      "kind": "file list",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 6.8,
+      "error": null,
+      "answer": "The following files contain information about tea and coffee:\n\n- tea_brewing_guide.md\n  - This file provides a comprehensive guide on brewing various types of tea, including green, black, oolong, white, herbal, and cold brew tea. It includes details on water temperature, steeping times, and storage tips.\n\n- coffee_brewing_guide.md\n  - This file offers a guide on brewing coffee using different methods such as pour-over, French press, espresso, and cold brew. It also includes information on the proper storage of coffee beans and troubleshooting common brewing issues."
+    },
+    {
+      "question": "How do I keep the original cause of an error in Python and in JavaScript?",
+      "kind": "two topics",
+      "correct": true,
+      "tool_calls": 2,
+      "seconds": 4.8,
+      "error": null,
+      "answer": "To keep the original cause of an error in Python and JavaScript, you can use the following methods:\n\n- **Python**: You can use the syntax `raise NewError from old_error` when raising a new error. This allows you to keep the original cause of the error visible. (Source: python_error_handling.md)\n\n- **JavaScript**: When throwing a new error, you can include the original error as the cause by using `new Error(\"message\", { cause: error })`. This way, the original error is preserved and can be accessed later. (Source: javascript_error_handling.md)"
+    },
+    {
+      "question": "What is the salary at Northpeak?",
+      "kind": "not in documents",
+      "correct": true,
+      "tool_calls": 1,
+      "seconds": 3.5,
+      "error": null,
+      "answer": "The documents do not contain any information regarding the salary at Northpeak."
+    },
+    {
+      "question": "How much is the bus fare?",
+      "kind": "not in documents",
+      "correct": true,
+      "tool_calls": 1,
+      "seconds": 3.1,
+      "error": null,
+      "answer": "The documents do not contain any information about bus fare."
+    }
+  ]
+}
