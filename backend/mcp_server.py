@@ -1,11 +1,12 @@
 import anyio
 import jwt
+from database import SessionLocal
 from mcp.server.fastmcp import Context, FastMCP
+from models import Document
+from safety import new_nonce, safe_filename, wrap_passage
+from security import decode_mcp_token
 from sqlalchemy import select
 
-from database import SessionLocal
-from models import Document
-from security import decode_mcp_token
 
 mcp = FastMCP(
     "Nexus Tools",
@@ -36,7 +37,7 @@ def _list_documents(workspace_id: int) -> list[dict]:
             .where(Document.workspace_id == workspace_id)
             .order_by(Document.created_at.desc())
         ).all()
-        return [{"filename": d.filename, "status": d.status} for d in docs]
+        return [{"filename": safe_filename(d.filename), "status": d.status} for d in docs]
     finally:
         db.close()
 
@@ -47,7 +48,14 @@ def _search(workspace_id: int, query: str, limit: int) -> list[dict]:
     db = SessionLocal()
     try:
         hits = search_chunks(db, workspace_id, query, limit=limit)
-        return [{"filename": h["filename"], "text": h["content"]} for h in hits]
+        nonce = new_nonce()
+        return [
+            {
+                "filename": safe_filename(h["filename"]),
+                "text": wrap_passage(nonce, h["filename"], h["content"]),
+            }
+            for h in hits
+        ]
     finally:
         db.close()
 

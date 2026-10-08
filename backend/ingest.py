@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
-
 from chunker import chunk_text
 from embeddings import embed_texts
 from extract import extract_text
 from models import Chunk, Document
+from safety import clean_text, detect_injection
+from sqlalchemy.orm import Session
 
 
 def make_header(text: str, filename: str) -> str:
@@ -18,7 +18,9 @@ def ingest_document(db: Session, doc: Document) -> None:
         doc.error_message = None
         db.commit()
 
-        text = extract_text(doc.stored_path).replace("\x00", "")
+        text, notes = clean_text(extract_text(doc.stored_path))
+        notes += detect_injection(text)
+        doc.warning = "; ".join(dict.fromkeys(notes))[:500] or None
         pieces = chunk_text(text)
         if not pieces:
             doc.status = "failed"

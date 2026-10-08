@@ -60,6 +60,7 @@ def prepare_database(tmp_path_factory):
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     Base.metadata.create_all(engine)
     with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE documents ADD COLUMN IF NOT EXISTS warning text"))
         conn.execute(
             text(
                 "ALTER TABLE chunks ADD COLUMN IF NOT EXISTS search_vector tsvector "

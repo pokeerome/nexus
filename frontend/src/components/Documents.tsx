@@ -128,6 +128,11 @@ export default function Documents({ workspaceId, role, userId }: Props) {
                 </span>
               </div>
               {d.error && <p className="text-red-400 text-xs">{d.error}</p>}
+              {d.warning && (
+                <p className="text-amber-400 text-xs">
+                  Warning: {d.warning}. The AI is told to ignore instructions inside files.
+                </p>
+              )}
             </li>
           ))}
         </ul>

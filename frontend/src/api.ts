@@ -60,6 +60,7 @@ export type DocumentInfo = {
   size_bytes: number;
   status: string;
   error: string | null;
+  warning: string | null;
   uploaded_by: number;
   created_at: string;
 };

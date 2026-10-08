@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Literal
 
 
@@ -18,17 +18,17 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 class SearchRequest(BaseModel):
-    query: str
+    query: str = Field(max_length=2000)
     limit: int = 5
 
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]
-    content: str
+    content: str = Field(max_length=6000)
 
 
 class ChatRequest(BaseModel):
-    question: str
-    history: list[ChatMessage] = []
+    question: str = Field(max_length=2000)
+    history: list[ChatMessage] = Field(default=[], max_length=20)
 
 class MemberAdd(BaseModel):
     email: EmailStr
