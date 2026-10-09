@@ -96,3 +96,32 @@ def wrap_documents(passages: list[tuple[str, str]]) -> str:
 
 def new_nonce() -> str:
     return secrets.token_hex(6)
+
+
+def flagged_notice(files: list[str], warnings: dict[str, str]) -> str | None:
+    """A short note for the user when an answer used a file that got a warning."""
+    items = [f"{name} ({warnings[name]})" for name in files if warnings.get(name)]
+    if not items:
+        return None
+    word = "a file that was flagged" if len(items) == 1 else "files that were flagged"
+    return f"Heads up: this answer used {word}: {'; '.join(items)}. Check it before you rely on it."
+
+
+def collect_warnings(content) -> dict[str, str]:
+    """Read tool results from the agent and pick out the files that carry a warning."""
+    import json
+
+    found: dict[str, str] = {}
+    if isinstance(content, str):
+        blocks = [content]
+    else:
+        blocks = [b.get("text", "") if isinstance(b, dict) else str(b) for b in content]
+    for text in blocks:
+        try:
+            data = json.loads(text)
+        except ValueError:
+            continue
+        for item in data if isinstance(data, list) else [data]:
+            if isinstance(item, dict) and item.get("warning") and item.get("filename"):
+                found[item["filename"]] = item["warning"]
+    return found

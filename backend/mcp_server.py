@@ -48,14 +48,27 @@ def _search(workspace_id: int, query: str, limit: int) -> list[dict]:
     db = SessionLocal()
     try:
         hits = search_chunks(db, workspace_id, query, limit=limit)
+        warnings = {}
+        if hits:
+            rows = db.execute(
+                select(Document.id, Document.warning).where(
+                    Document.id.in_([h["document_id"] for h in hits]),
+                    Document.warning.is_not(None),
+                )
+            ).all()
+            warnings = {r.id: r.warning for r in rows}
+
         nonce = new_nonce()
-        return [
-            {
+        results = []
+        for h in hits:
+            item = {
                 "filename": safe_filename(h["filename"]),
                 "text": wrap_passage(nonce, h["filename"], h["content"]),
             }
-            for h in hits
-        ]
+            if h["document_id"] in warnings:
+                item["warning"] = warnings[h["document_id"]]
+            results.append(item)
+        return results
     finally:
         db.close()
 

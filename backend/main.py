@@ -21,6 +21,7 @@ from limiter import (
 from mcp_server import mcp
 from memlog import log_memory
 from models import Chunk, Document, Membership, User, Workspace
+from safety import flagged_notice
 from schemas import (
     ChatRequest,
     LoginRequest,
@@ -241,10 +242,31 @@ def chat(
     standalone = rewrite_query(history, data.question)
     sources = search_chunks(db, workspace_id, standalone, limit=5)
 
+    # Look up warnings now, while the database session is still open
+    names = {s["filename"] for s in sources}
+    rows = db.execute(
+        select(Document.filename, Document.warning).where(
+            Document.workspace_id == workspace_id,
+            Document.filename.in_(names),
+            Document.warning.is_not(None),
+        )
+    ).all()
+    warnings = {r.filename: r.warning for r in rows}
+
     def event_stream():
         yield f"data: {json.dumps({'type': 'query', 'data': standalone})}\n\n"
+        used_files = []
         for event in stream_answer(sources, standalone):
+            if event["type"] == "done":
+                continue
+            if event["type"] == "sources":
+                used_files = [x["filename"] for x in event["data"]]
             yield f"data: {json.dumps(event)}\n\n"
+
+        notice = flagged_notice(used_files, warnings)
+        if notice:
+            yield f"data: {json.dumps({'type': 'notice', 'data': notice})}\n\n"
+        yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 

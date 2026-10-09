@@ -94,6 +94,7 @@ export async function streamChat(
   onSources: (sources: Source[]) => void,
   onToken: (token: string) => void,
   onQuery: (query: string) => void,
+  onNotice: (text: string) => void,
 ) {
   const res = await fetch(`${API_URL}/workspaces/${workspaceId}/chat`, {
     method: "POST",
@@ -125,6 +126,7 @@ export async function streamChat(
       if (event.type === "query") onQuery(event.data);
       if (event.type === "sources") onSources(event.data);
       if (event.type === "token") onToken(event.data);
+      if (event.type === "notice") onNotice(event.data);
     }
   }
 }
@@ -150,6 +152,7 @@ export async function streamAgent(
   onStep: (text: string) => void,
   onToken: (token: string) => void,
   onError: (message: string) => void,
+  onNotice: (text: string) => void,
 ) {
   const res = await fetch(`${API_URL}/workspaces/${workspaceId}/agent`, {
     method: "POST",
@@ -183,6 +186,7 @@ export async function streamAgent(
       }
       if (event.type === "token") onToken(event.data);
       if (event.type === "error") onError(event.data);
+      if (event.type === "notice") onNotice(event.data);
     }
   }
 }

@@ -9,6 +9,7 @@ type Message = {
   sources?: Source[];
   searchedFor?: string;
   steps?: string[];
+  notice?: string;
 };
 
 export default function Chat({ workspaceId }: { workspaceId: number }) {
@@ -53,6 +54,7 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
             updateLast((m) => ({ ...m, steps: [...(m.steps ?? []), step] })),
           (token) => updateLast((m) => ({ ...m, content: m.content + token })),
           (message) => updateLast((m) => ({ ...m, content: message })),
+          (notice) => updateLast((m) => ({ ...m, notice })),
         );
       } else {
         await streamChat(
@@ -62,6 +64,7 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
           (sources) => updateLast((m) => ({ ...m, sources })),
           (token) => updateLast((m) => ({ ...m, content: m.content + token })),
           (query) => updateLast((m) => ({ ...m, searchedFor: query })),
+          (notice) => updateLast((m) => ({ ...m, notice })),
         );
       }
     } catch (err) {
@@ -114,6 +117,7 @@ export default function Chat({ workspaceId }: { workspaceId: number }) {
                 Sources: {[...new Set(m.sources.map((s) => s.filename))].join(", ")}
               </p>
             )}
+            {m.notice && <p className="text-amber-400 text-xs mt-1">{m.notice}</p>}
           </div>
         ))}
       </div>
