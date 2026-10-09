@@ -1,7 +1,10 @@
 import os
+import time
 
 from dotenv import load_dotenv
 from openai import OpenAI
+
+from metrics import add_step, add_usage, mark
 from safety import wrap_documents
 
 load_dotenv()
@@ -42,21 +45,30 @@ def stream_answer(sources: list[dict], question: str):
     stream = client.chat.completions.create(
         model=CHAT_MODEL,
         stream=True,
+        stream_options={"include_usage": True},
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}"},
         ],
     )
 
+    started = time.perf_counter()
     answer = ""
     for event in stream:
+        usage = getattr(event, "usage", None)
+        if usage is not None:
+            add_usage(CHAT_MODEL, usage.prompt_tokens, usage.completion_tokens)
         if event.choices and event.choices[0].delta.content:
             piece = event.choices[0].delta.content
+            if not answer:
+                mark("first_token")
             answer += piece
             yield {"type": "token", "data": piece}
+    add_step("answer", (time.perf_counter() - started) * 1000)
 
     yield {"type": "sources", "data": used_sources(sources, answer)}
     yield {"type": "done"}
+
 
 REWRITE_PROMPT = """You help a document search system. Decide whether the user's last question continues the topic of the chat history, then answer in exactly one of two formats.
 
@@ -107,6 +119,9 @@ def rewrite_query(history: list[dict], question: str) -> str:
                 },
             ],
         )
+        usage = getattr(response, "usage", None)
+        if usage is not None:
+            add_usage(CHAT_MODEL, usage.prompt_tokens, usage.completion_tokens)
         answer = (response.choices[0].message.content or "").strip()
         if answer.upper().startswith("REWRITE:"):
             rewritten = answer[len("REWRITE:"):].strip()

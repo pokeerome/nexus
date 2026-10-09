@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, Integer, String, Text, DateTime, func
+from sqlalchemy import Float, ForeignKey, Integer, String, Text, DateTime, func
+from sqlalchemy.dialects.postgresql import JSONB
 from pgvector.sqlalchemy import Vector
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -54,3 +55,22 @@ class Chunk(Base):
     chunk_index: Mapped[int] = mapped_column(Integer)
     content: Mapped[str] = mapped_column(Text)
     embedding: Mapped[list[float]] = mapped_column(Vector(1536))
+
+class UsageEvent(Base):
+    """One row per request that used AI (and per question), for cost and speed numbers."""
+
+    __tablename__ = "usage_events"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
+    request_id: Mapped[str] = mapped_column(String(32))
+    workspace_id: Mapped[int | None] = mapped_column(Integer, index=True, nullable=True)
+    user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    kind: Mapped[str] = mapped_column(String(20))
+    status: Mapped[int] = mapped_column(Integer)
+    duration_ms: Mapped[int] = mapped_column(Integer)
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    embed_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    details: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

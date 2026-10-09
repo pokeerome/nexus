@@ -3,6 +3,7 @@ import jwt
 from database import SessionLocal
 from mcp.server.fastmcp import Context, FastMCP
 from models import Document
+from metrics import current
 from safety import new_nonce, safe_filename, wrap_passage
 from security import decode_mcp_token
 from sqlalchemy import select
@@ -26,6 +27,10 @@ def get_workspace_id(ctx: Context) -> int:
         payload = decode_mcp_token(auth[7:])
     except jwt.PyJWTError:
         raise ValueError("Invalid or expired token")
+    info = current()
+    if info is not None:
+        info.workspace_id = int(payload["ws"])
+        info.user_id = int(payload["sub"])
     return int(payload["ws"])
 
 

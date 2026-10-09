@@ -5,6 +5,7 @@ import type { Me } from "../api";
 import Chat from "../components/Chat";
 import Documents from "../components/Documents";
 import Members from "../components/Members";
+import Usage from "../components/Usage";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -97,6 +98,9 @@ export default function Dashboard() {
               myUserId={me.id}
               onChanged={() => setReloadCount((n) => n + 1)}
             />
+            {current.role === "owner" && (
+              <Usage key={`usage-${current.id}`} workspaceId={current.id} />
+            )}
           </>
         )}
       </div>

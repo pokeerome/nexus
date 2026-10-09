@@ -3,6 +3,8 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+
+from metrics import add_usage, count, current, timed
 from safety import collect_warnings, flagged_notice
 
 SYSTEM_PROMPT = """You are Nexus, an assistant that answers questions using the user's own documents.
@@ -18,19 +20,27 @@ Write in plain text. Do not use markdown symbols like ** or #. Use "- " for list
 Never write links or images unless the user asked for a link that appears in a passage."""
 
 
+
+AGENT_MODEL = "gpt-4o-mini"
+
+
 def get_model():
     from langchain_openai import ChatOpenAI
 
-    return ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    return ChatOpenAI(model=AGENT_MODEL, temperature=0)
 
 
 async def build_agent(model, mcp_url: str, token: str):
+    headers = {"Authorization": f"Bearer {token}"}
+    info = current()
+    if info is not None:
+        headers["X-Parent-Request-ID"] = info.request_id  # lets the logs link tool calls to this question
     client = MultiServerMCPClient(
         {
             "nexus": {
                 "transport": "streamable_http",
                 "url": mcp_url,
-                "headers": {"Authorization": f"Bearer {token}"},
+                "headers": headers,
             }
         }
     )
@@ -38,9 +48,12 @@ async def build_agent(model, mcp_url: str, token: str):
     model_with_tools = model.bind_tools(tools)
 
     async def call_model(state: MessagesState):
-        response = await model_with_tools.ainvoke(
-            [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
-        )
+        with timed("model"):
+            response = await model_with_tools.ainvoke(
+                [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
+            )
+        usage = getattr(response, "usage_metadata", None) or {}
+        add_usage(AGENT_MODEL, usage.get("input_tokens", 0), usage.get("output_tokens", 0))
         return {"messages": [response]}
 
     graph = StateGraph(MessagesState)
@@ -81,6 +94,7 @@ async def stream_agent_events(model, mcp_url: str, token: str, messages: list):
                     if isinstance(m, AIMessage):
                         if m.tool_calls:
                             for call in m.tool_calls:
+                                count("tool_calls")
                                 yield {
                                     "type": "tool_call",
                                     "data": {"name": call["name"], "args": call["args"]},
@@ -93,10 +107,7 @@ async def stream_agent_events(model, mcp_url: str, token: str, messages: list):
                         flagged.update(collect_warnings(m.content))
                         yield {
                             "type": "tool_result",
-                            "data": {
-                                "name": m.name,
-                                "preview": _text_of(m.content)[:200] or "(nothing found)",
-                            },
+                            "data": {"name": m.name, "preview": _text_of(m.content)[:200] or "(nothing found)"},
                         }
         used = [name for name in flagged if name.lower() in answer.lower()]
         notice = flagged_notice(used, flagged)

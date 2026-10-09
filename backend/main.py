@@ -2,6 +2,7 @@ import contextlib
 import json
 import os
 import uuid
+from datetime import timedelta
 from pathlib import Path
 
 from chat import rewrite_query, stream_answer
@@ -20,7 +21,8 @@ from limiter import (
 )
 from mcp_server import mcp
 from memlog import log_memory
-from models import Chunk, Document, Membership, User, Workspace
+from metrics import RequestLogMiddleware, timed
+from models import Chunk, Document, Membership, UsageEvent, User, Workspace
 from safety import flagged_notice
 from schemas import (
     ChatRequest,
@@ -38,7 +40,7 @@ from security import (
     hash_password,
     verify_password,
 )
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, text
 from sqlalchemy.orm import Session
 from tasks import ingest_document_task
 
@@ -70,6 +72,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(RequestLogMiddleware)  # added last, so it wraps everything
 
 
 @app.get("/health")
@@ -239,8 +243,10 @@ def chat(
     db: Session = Depends(get_db),
 ):
     history = [m.model_dump() for m in data.history][-6:]
-    standalone = rewrite_query(history, data.question)
-    sources = search_chunks(db, workspace_id, standalone, limit=5)
+    with timed("rewrite"):
+        standalone = rewrite_query(history, data.question)
+    with timed("search"):
+        sources = search_chunks(db, workspace_id, standalone, limit=5)
 
     # Look up warnings now, while the database session is still open
     names = {s["filename"] for s in sources}
@@ -430,3 +436,71 @@ def remove_member(
     db.delete(target)
     db.commit()
     return {"removed": user_id}
+
+@app.get("/workspaces/{workspace_id}/usage")
+def usage_stats(
+    workspace_id: int,
+    days: int = 7,
+    membership: Membership = Depends(require_role("owner")),
+    db: Session = Depends(get_db),
+):
+    days = max(1, min(days, 90))
+    since = func.now() - timedelta(days=days)
+    in_range = (UsageEvent.workspace_id == workspace_id, UsageEvent.created_at >= since)
+
+    by_kind = db.execute(
+        select(
+            UsageEvent.kind,
+            func.count().label("requests"),
+            func.count().filter(UsageEvent.status >= 400).label("errors"),
+            func.avg(UsageEvent.duration_ms).label("avg_ms"),
+            func.percentile_cont(0.95).within_group(UsageEvent.duration_ms).label("p95_ms"),
+            func.coalesce(func.sum(UsageEvent.input_tokens), 0).label("input_tokens"),
+            func.coalesce(func.sum(UsageEvent.output_tokens), 0).label("output_tokens"),
+            func.coalesce(func.sum(UsageEvent.embed_tokens), 0).label("embed_tokens"),
+            func.coalesce(func.sum(UsageEvent.cost_usd), 0).label("cost_usd"),
+        )
+        .where(*in_range)
+        .group_by(UsageEvent.kind)
+        .order_by(UsageEvent.kind)
+    ).all()
+
+    by_day = db.execute(
+        select(
+            func.date_trunc("day", UsageEvent.created_at).label("day"),
+            func.count().label("requests"),
+            func.coalesce(func.sum(UsageEvent.cost_usd), 0).label("cost_usd"),
+        )
+        .where(*in_range)
+        .group_by(text("1"))
+        .order_by(text("1"))
+    ).all()
+
+    kinds = [
+        {
+            "kind": r.kind,
+            "requests": r.requests,
+            "errors": r.errors,
+            "avg_ms": round(float(r.avg_ms or 0)),
+            "p95_ms": round(float(r.p95_ms or 0)),
+            "input_tokens": int(r.input_tokens),
+            "output_tokens": int(r.output_tokens),
+            "embed_tokens": int(r.embed_tokens),
+            "cost_usd": round(float(r.cost_usd), 6),
+        }
+        for r in by_kind
+    ]
+    return {
+        "days": days,
+        "total": {
+            "requests": sum(k["requests"] for k in kinds),
+            "errors": sum(k["errors"] for k in kinds),
+            "tokens": sum(k["input_tokens"] + k["output_tokens"] + k["embed_tokens"] for k in kinds),
+            "cost_usd": round(sum(k["cost_usd"] for k in kinds), 6),
+        },
+        "by_kind": kinds,
+        "by_day": [
+            {"day": r.day.date().isoformat(), "requests": r.requests, "cost_usd": round(float(r.cost_usd), 6)}
+            for r in by_day
+        ],
+    }

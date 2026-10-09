@@ -217,3 +217,26 @@ export function removeMember(workspaceId: number, userId: number) {
     method: "DELETE",
   });
 }
+
+export type UsageKind = {
+  kind: string;
+  requests: number;
+  errors: number;
+  avg_ms: number;
+  p95_ms: number;
+  input_tokens: number;
+  output_tokens: number;
+  embed_tokens: number;
+  cost_usd: number;
+};
+
+export type UsageStats = {
+  days: number;
+  total: { requests: number; errors: number; tokens: number; cost_usd: number };
+  by_kind: UsageKind[];
+  by_day: { day: string; requests: number; cost_usd: number }[];
+};
+
+export function getUsage(workspaceId: number, days: number): Promise<UsageStats> {
+  return request(`/workspaces/${workspaceId}/usage?days=${days}`);
+}

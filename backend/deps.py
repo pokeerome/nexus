@@ -4,6 +4,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from metrics import current
 from database import get_db
 from models import Membership, User
 from security import ALGORITHM, SECRET_KEY
@@ -26,6 +27,9 @@ def get_current_user(
     user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    info = current()
+    if info is not None:
+        info.user_id = user.id    
     return user
 
 def require_membership(
