@@ -25,20 +25,29 @@ export default function Usage({ workspaceId }: { workspaceId: number }) {
 
   useEffect(() => {
     let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    getUsage(workspaceId, days)
-      .then((data) => {
+    async function refresh() {
+      try {
+        const data = await getUsage(workspaceId, days);
         if (!cancelled) {
           setStats(data);
           setError("");
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         if (!cancelled) setError((err as Error).message);
-      });
+      } finally {
+        if (!cancelled) {
+          timeoutId = setTimeout(refresh, 5_000);
+        }
+      }
+    }
+
+    void refresh();
 
     return () => {
       cancelled = true;
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
     };
   }, [workspaceId, days]);
 
