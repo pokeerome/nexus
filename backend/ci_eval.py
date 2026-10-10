@@ -21,6 +21,10 @@ MIN_MRR = float(os.getenv("CI_MIN_MRR", "0.88"))
 
 
 def main() -> int:
+    if not (HERE / "docs").is_dir() or not (HERE / "questions.json").is_file():
+        print("Stopped: cannot find backend/ci_eval/docs and backend/ci_eval/questions.json.")
+        print("Unzip ci_eval.zip inside the backend folder, so that ci_eval sits next to ci_eval.py.")
+        return 2
     if os.getenv("ALLOW_CI_EVAL") != "1":
         print("Stopped: this script fills the database it connects to with sample data.")
         print("Set ALLOW_CI_EVAL=1 only for a throwaway database (CI does this).")
