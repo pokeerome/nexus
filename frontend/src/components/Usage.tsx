@@ -28,6 +28,11 @@ export default function Usage({ workspaceId }: { workspaceId: number }) {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     async function refresh() {
+      if (document.hidden) {
+        timeoutId = setTimeout(refresh, 30_000);
+        return;
+      }
+
       try {
         const data = await getUsage(workspaceId, days);
         if (!cancelled) {
@@ -38,7 +43,7 @@ export default function Usage({ workspaceId }: { workspaceId: number }) {
         if (!cancelled) setError((err as Error).message);
       } finally {
         if (!cancelled) {
-          timeoutId = setTimeout(refresh, 5_000);
+          timeoutId = setTimeout(refresh, 30_000);
         }
       }
     }

@@ -1,0 +1,28 @@
+Home Solar Panel Installation Guide
+
+Step 1: Check the roof
+Before anything else, inspect the roof. It must be able to carry an extra 20 kilograms per square meter. Repair any damaged roof sections first.
+
+Step 2: Choose the position
+In the northern hemisphere, panels should face south. The best tilt angle is close to the latitude of your location.
+
+Step 3: Fix the mounting rails
+Attach the rails to the roof rafters with lag bolts. Cover every bolt hole with roofing sealant to stop water leaks.
+
+Step 4: Place the panels
+Clip the panels onto the rails and connect them to each other in a series string.
+
+Step 5: Install the inverter
+Place the inverter near the main electrical panel. The inverter changes the direct current (DC) from the panels into alternating current (AC), which is what the house uses.
+
+Step 6: Connect to the grid
+A permit and an inspection are needed before the system is connected to the power grid.
+
+Safety rules
+- Switch off the system before any work.
+- Wear a safety harness when working higher than 2 meters.
+- Never work on the roof when it is wet or very windy.
+- Cover the panels with a blanket during work, because panels produce voltage whenever there is daylight.
+
+Maintenance
+Clean the panels twice a year with a soft brush and water. Check the inverter display once a month. A panel lasts about 25 years, and its output drops by about 0.5 percent each year.
