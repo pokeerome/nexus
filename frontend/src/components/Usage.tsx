@@ -29,7 +29,7 @@ export default function Usage({ workspaceId }: { workspaceId: number }) {
 
     async function refresh() {
       if (document.hidden) {
-        timeoutId = setTimeout(refresh, 30_000);
+        timeoutId = setTimeout(refresh, 15_000);
         return;
       }
 
@@ -43,7 +43,7 @@ export default function Usage({ workspaceId }: { workspaceId: number }) {
         if (!cancelled) setError((err as Error).message);
       } finally {
         if (!cancelled) {
-          timeoutId = setTimeout(refresh, 30_000);
+          timeoutId = setTimeout(refresh, 15_000);
         }
       }
     }
