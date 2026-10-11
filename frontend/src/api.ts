@@ -15,17 +15,29 @@ export function clearToken() {
   localStorage.removeItem("token");
 }
 
+const WAKING_UP_MESSAGE =
+  "Cannot reach the server. It may be waking up (free hosting). Please wait a minute and try again.";
+
+export function warmUp() {
+  fetch(`${API_URL}/health`).catch(() => {});
+}
+
 async function request(path: string, options: RequestInit = {}) {
   const token = getToken();
-  const res = await fetch(API_URL + path, {
-    ...options,
-    headers: {
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(API_URL + path, {
+      ...options,
+      headers: {
+        ...(options.body instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+  } catch {
+    throw new Error(WAKING_UP_MESSAGE);
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
