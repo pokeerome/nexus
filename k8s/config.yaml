@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-config
+data:
+  REDIS_URL: "redis://redis:6379/0"
+  FRONTEND_URL: "http://localhost:8080"
+  SEARCH_MODE: "hybrid"
+  RATE_LIMITS: "on"
+  CELERY_EAGER: "0"

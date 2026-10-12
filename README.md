@@ -9,6 +9,8 @@ I built it end to end as a portfolio project: accounts, workspaces and roles, ba
 **Live demo:** https://nexus-eta-smoky.vercel.app
 It runs on free hosting, so the first request after a pause can take about a minute. Please upload only test files.
 
+**Run locally on Kubernetes:** See the [minikube setup guide](k8s/README.md). This is a local learning setup, separate from the live demo.
+
 <!-- Demo video: add the link here after recording -->
 
 ## Try it in two minutes
