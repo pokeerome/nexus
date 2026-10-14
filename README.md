@@ -1,6 +1,7 @@
 # Nexus
 
 [![CI](https://github.com/pokeerome/nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/pokeerome/nexus/actions/workflows/ci.yml)
+[![M8ven Score](https://m8ven.ai/badge/mcp/pokeerome-nexus-mbqdh0?v=de07d029fec6f366a02b3a9529902962)](https://m8ven.ai/mcp/pokeerome-nexus-mbqdh0?s=readme)
 
 **A multi-tenant "ask your documents" app.** Teams upload files (including scanned PDFs), then ask questions in a chat or let an AI agent search several files and compare them. Every answer names the files it used.
 
